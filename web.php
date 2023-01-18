@@ -14,14 +14,12 @@
 */
 
 require_once("vendor/autoload.php");
-use Monolog\Level;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
 $logger = new Logger('transactions');
 $logstream = new StreamHandler('tools/error.log');
 $logger->pushHandler($logstream);
-$logger->info("Message test");
 
 echo "<h2>Ici vous pouvez forcer l'activation de la tâche automatique du plugin soit sur les dernières 24h, soit sur toute la base (Recommandé uniquement en cas d'urgence pour les grosses bases de données)</h2> </br>";
 echo "<form method='GET' action=''><div class='container'>";
@@ -33,9 +31,9 @@ if (isset($_GET['hardreload']) && isset($_GET['verif'])) {
       $DB = new mysqli("localhost", "root", "root", "glpi");
       $cron_status = 0;
       $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, id, tickets_id, date_mod, state FROM glpi_tickettasks WHERE state = 2";
-      starttask($sql, $DB, $cron_status);
+      starttask($sql, $DB, $cron_status, $logger);
 }
-else {
+else if (isset($_GET['hardreload'])) {
    echo "<span style='color:red;'>Merci de cocher la case</span>";
 }
 if (isset($_GET['reload'])) {
@@ -44,18 +42,20 @@ if (isset($_GET['reload'])) {
    $DB = new mysqli("localhost", "root", "root", "glpi");
    $cron_status = 0;
    $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, id, tickets_id, date_mod, state FROM glpi_tickettasks WHERE date_mod BETWEEN DATE(NOW()) - interval 1 day AND DATE(NOW()) + interval 1 day AND state = 2";
-   starttask($sql, $DB, $cron_status);
+   starttask($sql, $DB, $cron_status, $logger);
 }
-function starttask ($sql, $DB, $cron_status) {
+function starttask ($sql, $DB, $cron_status, $logger) {
    if ($result = $DB->query($sql)) {
       if ($result->num_rows == 1) {
          if ($row = $result->fetch_assoc()) {
-            echo task($row, $DB, $cron_status);
+            echo task($row, $DB, $cron_status, $logger);
+         } else {
+            $logger->info($DB->error);
          }
       }
       else if ($result->num_rows > 1){
          while ($row = $result->fetch_assoc()) {
-            switch (task($row, $DB, $cron_status)) {
+            switch (task($row, $DB, $cron_status, $logger)) {
                case 1:
                   $break = false;
                   break;
@@ -66,10 +66,13 @@ function starttask ($sql, $DB, $cron_status) {
             if ($break) {break;}
          }
       }
+   } else {
+      $logger->info($DB->error);
    }
 }
-function task ($row, $DB, $cron_status){
+function task ($row, $DB, $cron_status, $logger){
    $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, `id`, `state`, tickets_id, content FROM glpi_tickettasks WHERE tickets_id = " . $row['tickets_id'];
+   $success = false;
    if ($resultset = $DB->query($sql)) {
       $before = false; //Cette variable sert à déterminer si le state de la tâche précédente est à 2 (true) ou non (false)
       $break = false;
@@ -78,9 +81,9 @@ function task ($row, $DB, $cron_status){
             if ($before = true) { //Si la précédente tâche est passée à 2, on passe celle-ci à 1
                $sql = "UPDATE glpi_tickettasks SET state = 1 WHERE id = " . $rows['id'] . ";";
                if ($result = $DB->query($sql)) {
-                  $cron_status = 1;
+                  $success = true;
                } else {
-                  $cron_status = 0;
+                  $success = false;
                }
                $break = true;
             }
@@ -90,6 +93,13 @@ function task ($row, $DB, $cron_status){
          }
          if ($break) {break;}
       }
+   } else {
+      $logger->info($DB->error);
    }
-   return $cron_status;
+   if ($success) {
+      $logger->info("Rechargement de la base effectué avec succès");
+   }
+   else {
+      $logger->info("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
+   }
 }
