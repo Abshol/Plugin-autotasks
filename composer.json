@@ -1,7 +1,4 @@
 {
-    "require-dev": {
-        "glpi-project/coding-standard": "^0.9.0"
-    },
     "config": {
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
