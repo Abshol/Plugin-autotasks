@@ -50,7 +50,8 @@ function starttask ($sql, $DB, $cron_status, $logger) {
          if ($row = $result->fetch_assoc()) {
             echo task($row, $DB, $cron_status, $logger);
          } else {
-            $logger->info($DB->error);
+            echo "<span style='color:red;'>Une erreur est survenue lors du traitement de la requête</span>";
+            $logger->info("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
          }
       }
       else if ($result->num_rows > 1){
@@ -67,7 +68,8 @@ function starttask ($sql, $DB, $cron_status, $logger) {
          }
       }
    } else {
-      $logger->info($DB->error);
+      echo "<span style='color:red;'>Une erreur est survenue lors du traitement de la requête</span>";
+      $logger->info("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
    }
 }
 function task ($row, $DB, $cron_status, $logger){
@@ -94,12 +96,14 @@ function task ($row, $DB, $cron_status, $logger){
          if ($break) {break;}
       }
    } else {
-      $logger->info($DB->error);
+      echo "<span style='color:red;'>Une erreur est survenue lors du traitement de la requête</span>";
+      $logger->info("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
    }
    if ($success) {
       $logger->info("Rechargement de la base effectué avec succès");
    }
    else {
+      echo "<span style='color:red;'>Une erreur est survenue lors du traitement de la requête</span>";
       $logger->info("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
    }
 }
