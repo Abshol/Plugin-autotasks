@@ -91,7 +91,7 @@ function task ($row, $DB, $logger){
       return "<span style='color:red;'>Une erreur est survenue lors du traitement de la requête</span>";
    }
    if ($success) {
-      $logger->info("Rechargement de la base effectué avec succès");
+      $logger->info("Rechargement de la base effectué avec succès".$DB->error);
       return "<span style='color:green;'>L'action a été réalisée avec succès</span>";
    }
    else {
