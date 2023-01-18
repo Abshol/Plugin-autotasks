@@ -1,0 +1,1 @@
+The web.php file must only be activated in case of testing !

@@ -6,21 +6,37 @@
 * This file's purpose is to help you debug by giving a less "glpi" verbose about what's the plugging doing, allowing you to test it on a different page disconnected to glpi's site
 * 
 * Remove the content of the .htaccess file to access this file
+*
+*
+*
+* Instantiation de Monolog qui permettra de gérer les logs php
+*
 */
+
+require_once("vendor/autoload.php");
+use Monolog\Level;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+
+$logger = new Logger('transactions');
+$logstream = new StreamHandler('tools/error.log');
+$logger->pushHandler($logstream);
+$logger->info("Message test");
+
 echo "<h2>Ici vous pouvez forcer l'activation de la tâche automatique du plugin soit sur les dernières 24h, soit sur toute la base (Recommandé uniquement en cas d'urgence pour les grosses bases de données)</h2> </br>";
 echo "<form method='GET' action=''><div class='container'>";
 echo "<span class='firstbutton'><input type='submit' name='reload' value='Recharger les dernières 24h'></span>";
-echo "<span class='secondbutton'><input type='submit' name='hardreload' value='Recharger TOUTE la base de données'></span></div></form>";
-echo "<span class='checkbox' name='verif' id='verif'><label for='verif'>Cochez cette case si vous êtes sur de vouloir recharger toute la base</label>";
+echo "<span class='secondbutton'><input type='submit' name='hardreload' value='Recharger TOUTE la base de données'>";
+echo "<input type='checkbox' name='verif' id='verif' value='true'><label for='verif'>Cochez cette case si vous êtes sur de vouloir recharger toute la base  </label></span></div></form>";
 
 if (isset($_GET['hardreload']) && isset($_GET['verif'])) {
-   $DB = new mysqli("localhost", "root", "root", "glpi");
-   $cron_status = 0;
-   $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, id, tickets_id, date_mod, state FROM glpi_tickettasks WHERE state = 2";
-   starttask($sql, $DB, $cron_status);
+      $DB = new mysqli("localhost", "root", "root", "glpi");
+      $cron_status = 0;
+      $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, id, tickets_id, date_mod, state FROM glpi_tickettasks WHERE state = 2";
+      starttask($sql, $DB, $cron_status);
 }
 else {
-   $message = "<span style='red"
+   echo "<span style='color:red;'>Merci de cocher la case</span>";
 }
 if (isset($_GET['reload'])) {
    // $autotsk = new autotasks();
