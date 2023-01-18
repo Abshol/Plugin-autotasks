@@ -44,24 +44,24 @@ class PluginautotasksAutoTasks extends CommonDBTM
          $logger->info("La tâche a été effectuée avec succès");
       }
    }
-   static function starttask ($sql) {
+   function starttask ($sql) {
       $logger = new Logger('transactions');
       $logstream = new StreamHandler('../tools/error.log');
       $logger->pushHandler($logstream);
       global $DB, $CFG_GLPI;
       $mess = false;
-      
+
       if ($result = $DB->query($sql)) {
          if ($DB->numrows($result) == 1) {
             if ($row = $DB->fetch_assoc($result)) {
-               return task($row, $DB, $logger);
+               return $this->task($row, $DB, $logger);
             } else {
                $logger->info("Une erreur est survenue lors du rechargement de la base: ".$DB->error());
             }
          }
          else if ($DB->numrows($result) > 1){
             while ($row = $DB->fetch_assoc($result)) {
-               switch ($mess = task($row, $DB, $logger)) {
+               switch ($mess = $this->task($row, $DB, $logger)) {
                   case 1:
                      $break = false;
                      break;
@@ -77,7 +77,7 @@ class PluginautotasksAutoTasks extends CommonDBTM
       }
       return $mess;
    }
-   static function task ($row, $DB, $logger) {
+   function task ($row, $DB, $logger) {
       $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, `id`, `state`, tickets_id, content FROM glpi_tickettasks WHERE tickets_id = " . $row['tickets_id'];
       $success = false;
       if ($resultset = $DB->query($sql)) {
@@ -87,7 +87,7 @@ class PluginautotasksAutoTasks extends CommonDBTM
             if ($rows['state'] != "2") {
                if ($before = true) { //Si la précédente tâche est passée à 2, on passe celle-ci à 1
                   $sql = "UPDATE glpi_tickettasks SET state = 1 WHERE id = " . $rows['id'] . ";";
-                  if ($result = $DB->query($sql)) {
+                  if ($resultset = $DB->query($sql)) {
                      $success = true;
                   } else {
                      $success = false;
