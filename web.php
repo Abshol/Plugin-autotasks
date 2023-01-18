@@ -43,7 +43,6 @@ if (isset($_GET['reload'])) {
 
 function starttask ($sql, $DB, $logger) {
    if ($result = $DB->query($sql)) {
-      var_dump($result = $DB->query($sql));
       if ($result->num_rows == 1) {
          if ($row = $result->fetch_assoc()) {
             echo task($row, $DB, $logger);
