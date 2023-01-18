@@ -1,6 +1,6 @@
 <?php
 global $CFG_GLPI;
-define('autotasks_VERSION', 'b0.1');
+define('autotasks_VERSION', 'b0.9');
 // Récupération du fichier includes de GLPI, permet l'accès au cœur
 // include ("../inc/includes.php");
 
@@ -12,10 +12,10 @@ define('autotasks_VERSION', 'b0.1');
 function plugin_init_autotasks() {
    global $PLUGIN_HOOKS;
 
+   $PLUGIN_HOOKS['config_page']['autotasks'] = 'front/config.form.php';
+   Plugin::registerClass('autotasks');
    //required!
    $PLUGIN_HOOKS['csrf_compliant']['autotasks'] = true;
-
-   $PLUGIN_HOOKS['config_page']['autotasks'] = 'front/config.php'; 
 
    //some code here, like call to Plugin::registerClass(), populating PLUGIN_HOOKS, ...
 }
