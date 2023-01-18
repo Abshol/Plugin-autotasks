@@ -9,7 +9,7 @@
 *
 *
 *
-* Instantiation de Monolog qui permettra de gérer les logs php
+* Instanciation de Monolog qui permettra de gérer les logs php
 *
 */
 
@@ -29,7 +29,6 @@ echo "<input type='checkbox' name='verif' id='verif' value='true'><label for='ve
 
 if (isset($_GET['hardreload']) && isset($_GET['verif'])) {
       $DB = new mysqli("localhost", "root", "root", "glpi");
-      $cron_status = 0;
       $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, id, tickets_id, date_mod, state FROM glpi_tickettasks WHERE state = 2";
       starttask($sql, $DB, $cron_status, $logger);
 }
@@ -37,10 +36,7 @@ else if (isset($_GET['hardreload'])) {
    echo "<span style='color:red;'>Merci de cocher la case</span>";
 }
 if (isset($_GET['reload'])) {
-   // $autotsk = new autotasks();
-   // $autotsk->cronAutoTasks();
    $DB = new mysqli("localhost", "root", "root", "glpi");
-   $cron_status = 0;
    $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, id, tickets_id, date_mod, state FROM glpi_tickettasks WHERE date_mod BETWEEN DATE(NOW()) - interval 1 day AND DATE(NOW()) + interval 1 day AND state = 2";
    starttask($sql, $DB, $cron_status, $logger);
 }
