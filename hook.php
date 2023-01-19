@@ -1,5 +1,4 @@
 <?php
-require_once("../inc/crontask.class.php");
 require_once("vendor/autoload.php");
 /**
  * Install hook
@@ -8,10 +7,8 @@ require_once("vendor/autoload.php");
  **/
 function plugin_autotasks_install() {
     global $DB;
-    $crontask = new CronTask();
     //instanciate migration with version
     $migration = new Migration(100);
-    CronTask::register(pluginautotasksAutoTasks::class, 'AutoTasks', 300);
    
     if (!$DB->TableExists("glpi_plugin_autotaskslogs")) {
         $query = "CREATE TABLE `glpi`.`glpi_plugin_autotaskslogs` (`id` INT NOT NULL AUTO_INCREMENT , `user` INT NOT NULL , `hardreset` BOOLEAN NOT NULL, `date` DATE NOT NULL, `success` BOOLEAN NOT NULL, PRIMARY KEY (`id`));";

@@ -7,13 +7,6 @@ use Monolog\Handler\StreamHandler;
 
 class PluginautotasksAutoTasks extends CommonDBTM
 {
-
-   /*
-   * Instanciation de Monolog qui permettra de gérer les logs php
-   */
-
-
-   
    /**
     * Give cron information
     *
@@ -27,7 +20,7 @@ class PluginautotasksAutoTasks extends CommonDBTM
             return array(
                'description' => __('Finds in the database all tasks that are set to 0 when the one before is set to 2, and sets it to 1')            );
       }
-      return [];
+      return array();
    }
    
    /**
@@ -45,6 +38,7 @@ class PluginautotasksAutoTasks extends CommonDBTM
       } else {
          $logger->info("Erreur lors du lancement de la tâche automatique");
       }
+      return intval($success);
    }
 
    /**

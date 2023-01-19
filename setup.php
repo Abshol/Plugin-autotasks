@@ -14,6 +14,7 @@ function plugin_init_autotasks() {
 
    $PLUGIN_HOOKS['config_page']['autotasks'] = 'front/config.form.php';
    Plugin::registerClass('autotasks');
+   CronTask::register('pluginautotasksAutoTasks', 'autotasks', 300);
    //required!
    $PLUGIN_HOOKS['csrf_compliant']['autotasks'] = true;
 
