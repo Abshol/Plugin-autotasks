@@ -57,7 +57,6 @@ class PluginautotasksAutoTasks extends CommonDBTM
    function starttask ($sql) {
       global $DB, $CFG_GLPI;
       $mess = false;
-
       if ($result = $DB->query($sql)) {
          if ($DB->numrows($result) == 1) {
             if ($row = $DB->fetch_assoc($result)) {
@@ -99,7 +98,7 @@ class PluginautotasksAutoTasks extends CommonDBTM
     * @return bool
     **/
    function task ($row, $DB) {
-      $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, `id`, `state`, tickets_id, content FROM glpi_tickettasks WHERE tickets_id = " . $row['tickets_id'];
+      $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, `id`, `state`, tickets_id, content FROM glpi_tickettasks WHERE tickets_id = ".$row['tickets_id'].";";
       $success = true;
       if ($resultset = $DB->query($sql)) {
          $before = false; //Cette variable sert à déterminer si le state de la tâche précédente est à 2 (true) ou non (false)
@@ -163,9 +162,9 @@ class PluginautotasksAutoTasks extends CommonDBTM
       if ($result = $DB->query($sql)) {
          $row = $DB->fetch_assoc($result);
          if ($row['user'] > 0) {
-            return false;
-         } else {
             return true;
+         } else {
+            return false;
          }
       } else {
          $this->logs($DB->error);

@@ -20,8 +20,8 @@ Plugin::load('autotasks');
 Html::header("AutoTasks Config", $_SERVER['PHP_SELF'], "config", "plugins");
 echo __("<h2>Ici vous pouvez forcer l'activation de la tâche automatique du plugin soit sur les dernières 24h, soit sur toute la base (Recommandé uniquement en cas d'urgence pour les grosses bases de données)</h2> </br>", 'autotasks');
 echo __("<form method='GET' action=''><div class='container'>", 'autotasks');
-echo __("<span class='firstbutton'><input type='submit' name='reload' value='Recharger les dernières 24h'></span>", 'autotasks');
-echo __("<span class='secondbutton'><input type='submit' name='hardreload' value='Recharger TOUTE la base de données'>", 'autotasks');
+echo __("<span class='firstbutton'><input type='submit' name='reset' value='Recharger les dernières 24h'></span>", 'autotasks');
+echo __("<span class='secondbutton'><input type='submit' name='hardreset' value='Recharger TOUTE la base de données'>", 'autotasks');
 echo __("<input type='checkbox' name='verif' id='verif' value='true'><label for='verif' style='$style'>Cochez cette case si vous êtes sur de vouloir recharger toute la base  </label></span></div></form>", 'autotasks');
 
 if (isset($_GET['reset'])) {
