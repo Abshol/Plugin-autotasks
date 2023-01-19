@@ -26,7 +26,7 @@ if (isset($_GET['reload'])) {
       echo "<span style='color:red;'>Une erreur s'est produite lors du rechargement de la base</span>";
    }
 }
-if (isset($_GET['reload'])) {
+if (isset($_GET['hardreload'])) {
    $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, id, tickets_id, date_mod, state FROM glpi_tickettasks WHERE state = 2";
    $autotsk = new pluginautotasksAutoTasks();
    if ($autotsk->starttask($sql)) {

@@ -37,11 +37,13 @@ class PluginautotasksAutoTasks extends CommonDBTM
     *
     * @return integer either 0 or 1
     **/
-   static function cronAutoTasks($task = NULL){
+   static function cronAutoTasks($task = NULL) {
       $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, id, tickets_id, date_mod, state FROM glpi_tickettasks WHERE date_mod BETWEEN DATE(NOW()) - interval 1 day AND DATE(NOW()) + interval 1 day AND state = 2";
       $success = starttask($sql);
       if ($success) {
          $logger->info("La tâche a été effectuée avec succès");
+      } else {
+         $logger->info("Erreur lors du lancement de la tâche automatique");
       }
    }
    function starttask ($sql) {
@@ -56,30 +58,35 @@ class PluginautotasksAutoTasks extends CommonDBTM
             if ($row = $DB->fetch_assoc($result)) {
                return $this->task($row, $DB, $logger);
             } else {
-               $logger->info("Une erreur est survenue lors du rechargement de la base: ".$DB->error());
+               $logger->info("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
             }
-         }
-         else if ($DB->numrows($result) > 1){
+         } else if ($DB->numrows($result) > 1){
             while ($row = $DB->fetch_assoc($result)) {
                switch ($mess = $this->task($row, $DB, $logger)) {
-                  case 1:
+                  case true:
                      $break = false;
                      break;
-                  case 0:
+                  case false:
                      $break = true;
                      break;
                }
-               if ($break) {break;}
+               if ($break) {
+                  $logger->info("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
+                  break;
+               }
             }
+         } else {
+            $logger->info("La base a été rechargée avec succès");
+            return true;
          }
       } else {
-         $logger->info("Une erreur est survenue lors du rechargement de la base: ".$DB->error());
+         $logger->info("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
       }
       return $mess;
    }
    function task ($row, $DB, $logger) {
       $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, `id`, `state`, tickets_id, content FROM glpi_tickettasks WHERE tickets_id = " . $row['tickets_id'];
-      $success = false;
+      $success = true;
       if ($resultset = $DB->query($sql)) {
          $before = false; //Cette variable sert à déterminer si le state de la tâche précédente est à 2 (true) ou non (false)
          $break = false;
@@ -101,10 +108,10 @@ class PluginautotasksAutoTasks extends CommonDBTM
             if ($break) {break;}
          }
       } else {
-         $logger->info("Une erreur est survenue lors du rechargement de la base: ".$DB->error());
+         $logger->info("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
       }
       if (!$success) {
-         $logger->info("Une erreur est survenue lors du rechargement de la base: ".$DB->error());
+         $logger->info("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
       }
       return $success;
    }
