@@ -12,7 +12,26 @@
 * Instanciation de Monolog qui permettra de gérer les logs php
 *
 */
+$api_url="http://localhost/glpi/apirest.php";
+$headers = [
+'Content-Type: application/json',
+'app-token: ' .$_COOKIE,
+'session-token: '.$_SESSION 
+];
 
+$ch = curl_init();
+$url=$api_url . "/search/User?forcedisplay[0]=2&forcedisplay[1]=5&criteria[1][field]=1&criteria[1][searchtype]=2&criteria[1][value]=" . $username;;
+curl_setopt($ch, CURLOPT_URL,$url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+$json = curl_exec($ch);
+curl_close ($ch);
+$obj = json_decode($json,true);
+
+$glpi_myuser_id =$obj['session']['glpiID'];
+echo "<br/>ID utilisateur ".$glpi_myuser_id;
+//**********il y a plein d'autres infos dans la réponse :*********;
+print_r($obj);
 require_once("vendor/autoload.php");
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;

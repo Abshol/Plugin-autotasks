@@ -1,6 +1,6 @@
 <?php
 global $CFG_GLPI;
-define('autotasks_VERSION', 'b0.9');
+define('autotasks_VERSION', '1.0');
 // Récupération du fichier includes de GLPI, permet l'accès au cœur
 // include ("../inc/includes.php");
 
