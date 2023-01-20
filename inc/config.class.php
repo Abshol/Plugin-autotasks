@@ -18,7 +18,7 @@ class PluginautotasksAutoTasks extends CommonDBTM
       switch ($name) {
          case 'autotasks':
             return array(
-               'description' => __('Finds in the database all tasks that are set to 0 when the one before is set to 2, and sets it to 1')            );
+               'description' => __('Finds in the database all tasks that are set to 0 when the one before is set to 2, and sets it to 1'));
       }
       return array();
    }
@@ -42,7 +42,7 @@ class PluginautotasksAutoTasks extends CommonDBTM
    }
 
    /**
-    * Fonction qui va lancer la tâche
+    * Fonction qui va préparer la tâche dans le cas où il y a plusieurs résultats, un seul ou aucun
     *
     * @param string $sql : Requête SQL
     *

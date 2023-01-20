@@ -2,6 +2,7 @@
 global $CFG_GLPI;
 require_once("vendor/autoload.php");
 require_once("../inc/includes.php");
+
 /**
  * Install hook
  *
