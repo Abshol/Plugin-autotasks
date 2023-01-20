@@ -1,8 +1,8 @@
 <?php
-global $CFG_GLPI;
 define('autotasks_VERSION', '1.0');
 // Récupération du fichier includes de GLPI, permet l'accès au cœur
 // include ("../inc/includes.php");
+global $CFG_GLPI;
 
 /**
  * Init the hooks of the plugins - Needed
@@ -14,15 +14,12 @@ function plugin_init_autotasks() {
 
    $PLUGIN_HOOKS['config_page']['autotasks'] = 'front/config.form.php';
    Plugin::registerClass('autotasks');
-   CronTask::register('pluginautotasksAutoTasks', 'autotasks', 300);
-   //required!
-   $PLUGIN_HOOKS['csrf_compliant']['autotasks'] = true;
 
-   //some code here, like call to Plugin::registerClass(), populating PLUGIN_HOOKS, ...
+   $PLUGIN_HOOKS['csrf_compliant']['autotasks'] = true;
 }
 
 /**
- * Get the name and the version of the plugin - Needed
+ * Get the name and the version of the plugin
  *
  * @return array
  */
@@ -39,16 +36,6 @@ function plugin_version_autotasks() {
          ]
       ]
    ];
-}
-
-/**
- * Optional : check prerequisites before install : may print errors or add to message after redirect
- *
- * @return boolean
- */
-function plugin_autotasks_check_prerequisites() {
-   //do what the checks you want
-   return true;
 }
 
 /**
