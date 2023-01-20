@@ -47,7 +47,7 @@ echo "<span class='secondbutton'><input type='submit' name='hardreload' value='R
 echo "<input type='checkbox' name='verif' id='verif' value='true'><label for='verif'>Cochez cette case si vous êtes sur de vouloir recharger toute la base  </label></span></div></form>";
 
 if (isset($_GET['hardreload']) && isset($_GET['verif'])) {
-   $DB = new mysqli("localhost", "root", "root", "glpi");
+   $DB = new mysqli("[host]", "[user]", "[pass]", "[database]");
    $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, id, tickets_id, date_mod, state FROM glpi_tickettasks WHERE state = 2";
    starttask($sql, $DB, $logger);
 }

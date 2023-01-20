@@ -28,7 +28,7 @@ function plugin_version_autotasks() {
       'name'           => 'autotasks',
       'version'        => autotasks_VERSION,
       'author'         => 'Abshol',
-      'license'        => '¯\_(ツ)_/¯',
+      'license'        => '',
       'homepage'       => 'https://github.com/Abshol',
       'requirements'   => [
          'glpi'   => [
