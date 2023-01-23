@@ -1,88 +1,85 @@
 <?php
-/* 
-* BE CAREFULL NOT TO LET THIS FILE ACCESSIBLE
-* YOU MUST ONLY USE IT WHEN DEBUGGING
-*
-* This file's purpose is to help you debug by giving a less "glpi" verbose about what's the plugging doing, allowing you to test it on a different page disconnected to glpi's site
-* 
-* Remove the content of the .htaccess file to access this file
-*
-*
-*
-* Instanciation de Monolog qui permettra de gérer les logs php
-*
-*/
-$api_url="http://localhost/glpi/apirest.php";
-$headers = [
-'Content-Type: application/json',
-'app-token: ' .$_COOKIE,
-'session-token: '.$_SESSION 
-];
+/**
+ * NE LAISSEZ PAS CE FICHIER ACCESSIBLE SUR VOTRE SERVEUR
+ * A N'UTILISER QU'EN CAS DE DEBUG
+ *
+ * Ce fichier est là pour vous aider en cas de bugs afin de vous donner une version moins "glpienne" des messages d'erreurs (le code ici est le même que dans config.form.php sans les variables et classes de glpi)
+ * 
+ * Supprimez le fichier .htaccess (ou juste le point devant) pour rendre ce fichier accessible
+ *
+ */
 
-$ch = curl_init();
-$url=$api_url . "/search/User?forcedisplay[0]=2&forcedisplay[1]=5&criteria[1][field]=1&criteria[1][searchtype]=2&criteria[1][value]=" . $username;;
-curl_setopt($ch, CURLOPT_URL,$url);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-$json = curl_exec($ch);
-curl_close ($ch);
-$obj = json_decode($json,true);
-
-$glpi_myuser_id =$obj['session']['glpiID'];
-echo "<br/>ID utilisateur ".$glpi_myuser_id;
-//**********il y a plein d'autres infos dans la réponse :*********;
-print_r($obj);
 require_once("vendor/autoload.php");
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+
+/**
+ * Changez ces variables avec les valeurs correspondants à votre db
+ */
+$host = 'host';
+$user = 'user';
+$pass = 'pass';
+$database = "database";
 
 $logger = new Logger('transactions');
 $logstream = new StreamHandler('tools/error.log');
 $logger->pushHandler($logstream);
 
-echo "<h2>Ici vous pouvez forcer l'activation de la tâche automatique du plugin soit sur les dernières 24h, soit sur toute la base (Recommandé uniquement en cas d'urgence pour les grosses bases de données)</h2> </br>";
-echo "<form method='GET' action=''><div class='container'>";
-echo "<span class='firstbutton'><input type='submit' name='reload' value='Recharger les dernières 24h'></span>";
-echo "<span class='secondbutton'><input type='submit' name='hardreload' value='Recharger TOUTE la base de données'>";
-echo "<input type='checkbox' name='verif' id='verif' value='true'><label for='verif'>Cochez cette case si vous êtes sur de vouloir recharger toute la base  </label></span></div></form>";
+echo "<div class='main_form rss card singleaction center-h' style='width:65%; margin:0% 25% 0% 15%;'><div class='ui-widget-header'><h2>Ici vous pouvez forcer l'activation de la tâche automatique du plugin soit sur les dernières 24h, soit sur toute la base (Recommandé uniquement en cas d'urgence pour les grosses bases de données)</h2></div></br>";
+echo "<form method='GET' action=''>";
+echo "<div class='rich_text_container'><span class='btn-linkstyled left'><input type='submit' class='vsubmit' name='reset' value='Recharger les dernières 24h'></span>";
+echo "<span class='right'><input type='submit' class='vsubmit' name='hardreset' value='Recharger TOUTE la base de données'>";
+echo "<input type='checkbox' name='verif' id='verif' value='true'><label for='verif'>Cochez cette case si vous êtes sur de vouloir recharger toute la base </label></span></div>";
 
-if (isset($_GET['hardreload']) && isset($_GET['verif'])) {
-   $DB = new mysqli("[host]", "[user]", "[pass]", "[database]");
+if (isset($_GET['hardreset']) && isset($_GET['verif'])) {
+   $DB = new mysqli($host, $user, $pass, $database);
    $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, id, tickets_id, date_mod, state FROM glpi_tickettasks WHERE state = 2";
    starttask($sql, $DB, $logger);
 }
-else if (isset($_GET['hardreload'])) {
+else if (isset($_GET['hardreset'])) {
    echo "<span style='color:red;'>Merci de cocher la case</span>";
 }
-if (isset($_GET['reload'])) {
+if (isset($_GET['reset'])) {
    $DB = new mysqli("localhost", "root", "root", "glpi");
    $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, id, tickets_id, date_mod, state FROM glpi_tickettasks WHERE date_mod BETWEEN DATE(NOW()) - interval 1 day AND DATE(NOW()) + interval 1 day AND state = 2";
    starttask($sql, $DB, $logger);
 }
 
 function starttask ($sql, $DB, $logger) {
+   $mess = false;
    if ($result = $DB->query($sql)) {
       if ($result->num_rows == 1) {
          if ($row = $result->fetch_assoc()) {
-            echo task($row, $DB, $logger);
+            return task($row, $DB, $logger);
          } else {
-            echo "<span style='color:red;'>Une erreur est survenue lors du traitement de la requête</span>";
             $logger->info("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
          }
-      }
-      else if ($result->num_rows > 1){
+      } else if ($result->num_rows > 1){
          while ($row = $result->fetch_assoc()) {
-            $mess = task($row, $DB, $logger);
+            switch ($mess = task($row, $DB, $logger)) {
+               case true:
+                  $break = false;
+                  break;
+               case false:
+                  $break = true;
+                  break;
+            }
+            if ($break) {
+               $logger->info("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
+               break;
+            }
          }
-         echo $mess;
+      } else {
+         $logger->info("", false);
+         return true;
       }
    } else {
-      echo "<span style='color:red;'>Une erreur est survenue lors du traitement de la requête</span>";
       $logger->info("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
    }
+   return $mess;
 }
-function task ($row, $DB, $logger){
-   $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, `id`, `state`, tickets_id, content FROM glpi_tickettasks WHERE tickets_id = " . $row['tickets_id'];
+function task ($row, $DB, $logger) {
+   $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, `id`, `state`, tickets_id, content FROM glpi_tickettasks WHERE tickets_id = ".$row['tickets_id'].";";
    $success = true;
    if ($resultset = $DB->query($sql)) {
       $before = false; //Cette variable sert à déterminer si le state de la tâche précédente est à 2 (true) ou non (false)
@@ -106,14 +103,9 @@ function task ($row, $DB, $logger){
       }
    } else {
       $logger->info("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
-      return "<span style='color:red;'>Une erreur est survenue lors du traitement de la requête</span>";
    }
-   if ($success) {
-      $logger->info("Rechargement de la base effectué avec succès".$DB->error);
-      return "<span style='color:green;'>L'action a été réalisée avec succès</span>";
-   }
-   else {
+   if (!$success) {
       $logger->info("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
-      return "<span style='color:red;'>Une erreur est survenue lors du traitement de la requête</span>";
    }
+   return $success;
 }
