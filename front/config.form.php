@@ -20,7 +20,7 @@ echo __("<div class='main_form rss card singleaction center-h' style='width:65%;
 echo __("<form method='GET' action=''>", 'autotasks');
 echo __("<div class='rich_text_container'><span class='btn-linkstyled left'><input type='submit' class='vsubmit' name='reset' value='Recharger les dernières 24h'></span>", 'autotasks');
 echo __("<span class='right'><input type='submit' class='vsubmit' name='hardreset' value='Recharger TOUTE la base de données'>", 'autotasks');
-echo __("<input type='checkbox' name='verif' id='verif' value='true'><label for='verif' style='$style'>Cochez cette case si vous êtes sur de vouloir recharger toute la base </label></span></div></form>", 'autotasks');
+echo __("<input type='checkbox' name='verif' id='verif' value='true'><label for='verif' style='$style'>Cochez cette case si vous êtes sur de vouloir recharger toute la base </label></span></div>", 'autotasks');
 
 if (isset($_GET['reset'])) {
    $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, id, tickets_id, date_mod, state FROM glpi_tickettasks WHERE date_mod BETWEEN DATE(NOW()) - interval 1 day AND DATE(NOW()) + interval 1 day AND state = 2";
@@ -46,5 +46,5 @@ if (isset($_GET['hardreset'])&& isset($_GET['verif'])) {
       }
    }
 }
-echo "<br><br></div>";
+echo "<br><br></div></form>";
 Html::footer();

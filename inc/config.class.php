@@ -1,5 +1,5 @@
 <?php
-// include ("../../../inc/includes.php");
+include ("../inc/includes.php");
 require_once("../vendor/autoload.php");
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
@@ -16,7 +16,7 @@ class PluginautotasksConfig extends CommonDBTM
     **/
    static function cronInfo($name) {
       switch ($name) {
-         case 'Config':
+         case 'Autotasks-Config':
             return array(
                'description' => __('Finds in the database all tasks that are set to 0 when the one before is set to 2, and sets it to 1'));
       }
