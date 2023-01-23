@@ -4,7 +4,7 @@
  *
  * @return boolean
  **/
-include_once("../inc/includes.php");
+include("../inc/cron.class.php");
 function plugin_autotasks_install() {
     global $DB;
     //instanciate migration with version

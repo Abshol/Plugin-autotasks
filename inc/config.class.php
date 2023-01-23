@@ -1,6 +1,5 @@
 <?php
 if (file_exists("../inc/includes.php")){
-   include("../inc/includes.php");
 } else if (file_exists("../../../inc/includes.php")) {
    include("../../../inc/includes.php");
 } else {

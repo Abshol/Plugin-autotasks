@@ -1,5 +1,6 @@
 <?php
-include ("../inc/config.class.php");
+global $DB, $CFG_GLPI;
+include("../inc/config.class.php");
 if (!defined('GLPI_ROOT')) {
    echo "Vous n'avez pas l'authorisation d'accéder à cette page";
 } 
@@ -9,8 +10,6 @@ if (isset($_GET['hardreload']) && !isset($_GET['verif'])) {
    $style = "color:red;";
 }
 
-
-global $DB, $CFG_GLPI;
 
 // To be available when plugin in not activated
 Plugin::load('autotasks');

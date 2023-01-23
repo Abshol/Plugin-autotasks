@@ -1,10 +1,5 @@
 <?php
 define('autotasks_VERSION', '1.0');
-// Récupération du fichier includes de GLPI, permet l'accès au cœur
-global $CFG_GLPI;
-
-
-
 /**
  * Init the hooks of the plugins - Needed
  *
