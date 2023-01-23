@@ -24,7 +24,7 @@ echo __("<input type='checkbox' name='verif' id='verif' value='true'><label for=
 
 if (isset($_GET['reset'])) {
    $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, id, tickets_id, date_mod, state FROM glpi_tickettasks WHERE date_mod BETWEEN DATE(NOW()) - interval 1 day AND DATE(NOW()) + interval 1 day AND state = 2";
-   $autotsk = new pluginautotasksAutoTasks();
+   $autotsk = new PluginautotasksConfig();
    $reussite = $autotsk->starttask($sql);
    if ($autotsk->tasklog($reussite, $DB)) {
       echo "<br><br><span style='color:green;'>L'action a été réalisée avec succès</span>";
@@ -33,7 +33,7 @@ if (isset($_GET['reset'])) {
    }
 }
 if (isset($_GET['hardreset'])&& isset($_GET['verif'])) {
-   $autotsk = new pluginautotasksAutoTasks();
+   $autotsk = new PluginautotasksConfig();
    if ($autotsk->hardreset(Session::getLoginUserID(), $DB)) {
       echo "<br><br><span style='color:red;'>Erreur: Vous avez déjà effectué cette action dans la journée</span>";
    } else {

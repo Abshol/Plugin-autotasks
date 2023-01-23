@@ -1,11 +1,11 @@
 <?php
-include ("../../../inc/includes.php");
+// include ("../../../inc/includes.php");
 require_once("../vendor/autoload.php");
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
 
-class PluginautotasksAutoTasks extends CommonDBTM
+class PluginautotasksConfig extends CommonDBTM
 {
    /**
     * Give cron information
@@ -16,7 +16,7 @@ class PluginautotasksAutoTasks extends CommonDBTM
     **/
    static function cronInfo($name) {
       switch ($name) {
-         case 'autotasks':
+         case 'Config':
             return array(
                'description' => __('Finds in the database all tasks that are set to 0 when the one before is set to 2, and sets it to 1'));
       }
@@ -30,13 +30,14 @@ class PluginautotasksAutoTasks extends CommonDBTM
     *
     * @return integer either 0 or 1
     **/
-   static function cronAutoTasks($task = NULL) {
+   public static function cronConfig($task = NULL) {
+      $autotsk = new PluginautotasksConfig();
       $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, id, tickets_id, date_mod, state FROM glpi_tickettasks WHERE date_mod BETWEEN DATE(NOW()) - interval 1 day AND DATE(NOW()) + interval 1 day AND state = 2";
-      $success = starttask($sql);
+      $success = $autotsk->starttask($sql);
       if ($success) {
-         $logger->info("La tâche a été effectuée avec succès");
+         $autotsk->logs("La tâche a été effectuée avec succès");
       } else {
-         $logger->info("Erreur lors du lancement de la tâche automatique");
+         $autotsk->logs("Erreur lors du lancement de la tâche automatique");
       }
       return intval($success);
    }
@@ -48,7 +49,7 @@ class PluginautotasksAutoTasks extends CommonDBTM
     *
     * @return bool : Si La tâche s'est effectuée sans problèmes
     **/
-   function starttask ($sql) {
+   public function starttask ($sql) {
       global $DB, $CFG_GLPI;
       $mess = false;
       if ($result = $DB->query($sql)) {
@@ -56,7 +57,7 @@ class PluginautotasksAutoTasks extends CommonDBTM
             if ($row = $DB->fetch_assoc($result)) {
                return $this->task($row, $DB);
             } else {
-               $this->logs($DB->error);
+               $this->logs("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
             }
          } else if ($DB->numrows($result) > 1){
             while ($row = $DB->fetch_assoc($result)) {
@@ -69,7 +70,7 @@ class PluginautotasksAutoTasks extends CommonDBTM
                      break;
                }
                if ($break) {
-                  $this->logs($DB->error);
+                  $this->logs("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
                   break;
                }
             }
@@ -78,7 +79,7 @@ class PluginautotasksAutoTasks extends CommonDBTM
             return true;
          }
       } else {
-         $this->logs($DB->error);
+         $this->logs("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
       }
       return $mess;
    }
@@ -115,10 +116,10 @@ class PluginautotasksAutoTasks extends CommonDBTM
             if ($break) {break;}
          }
       } else {
-         $this->logs($DB->error);
+         $this->logs("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
       }
       if (!$success) {
-         $this->logs($DB->error);
+         $this->logs("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
       }
       return $success;
    }
@@ -161,7 +162,7 @@ class PluginautotasksAutoTasks extends CommonDBTM
             return false;
          }
       } else {
-         $this->logs($DB->error);
+         $this->logs("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
          return false;
       }
    }
@@ -169,20 +170,16 @@ class PluginautotasksAutoTasks extends CommonDBTM
    /**
     * Permet de logs les erreurs survenues lors des requêtes
     * 
-    * @param mixed $dberror : Dernière erreur sql
+    * @param mixed $message : Dernière erreur sql
     * @param boolean @error : Savoir si le message à envoyer est un message d'erreur ou de succès (true si erreur, false si succès)
     *
     * @return void
     **/
-   function logs($dberror, $error = true) {
+   function logs($message) {
       $logger = new Logger('transactions');
       $logstream = new StreamHandler('../tools/error.log');
       $logger->pushHandler($logstream);
 
-      if ($error) {
-         $logger->info("Une erreur est survenue lors du rechargement de la base: ".$dberror);
-      } else {
-         $logger->info("La base a été rechargée avec succès");
-      }
+      $logger->info($message);
    }
 }
