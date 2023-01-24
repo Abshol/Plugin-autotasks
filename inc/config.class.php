@@ -130,13 +130,21 @@ class PluginautotasksConfig extends CommonDBTM
       }
    }
 
+   /**
+    * Dans le cas où il y a plusieurs groupes, cette fonction va supprimer celui dont la tâche est terminée
+    *
+    * @param mixed $row Lignes récupérées via la requête précédente 
+    * @param mysqli $DB Base de données
+    * 
+    * @return boolean
+    */
    function groupDelete($row, $DB) {
       $sql = "DELETE FROM glpi_groups_tickets WHERE groups_id = ".$row['groups_id_tech']." AND tickets_id = ".$row['tickets_id'];
       if ($DB->query($sql)) {
-         $this->logs("Suppression de l'attribution du groupe ".$row['groups_id_tech']." du ticket ".$row['tickets_id']." réussie");
+         $this->logs("Suppression de l'attribution du groupe ".$row['groups_id_tech']." au ticket ".$row['tickets_id']." réussie");
          return true;
       } else {
-         $this->logs("Echec de la suppression de l'attribution du groupe ".$row['groups_id_tech']." du ticket ".$row['tickets_id']);
+         $this->logs("Echec de la suppression de l'attribution du groupe ".$row['groups_id_tech']." au ticket ".$row['tickets_id']);
          return false;
       }
    }
