@@ -1,7 +1,6 @@
 <?php
 include("config.class.php");
 
-
 class PluginautotasksAuto extends CommonDBTM 
 {
     /**
