@@ -68,7 +68,7 @@ class PluginautotasksConfig extends CommonDBTM
                   if ($this->groupVerif($rows, $DB)) {
                      $sql2 = "UPDATE glpi_tickettasks SET state = 1 WHERE id = " . $rows['id'] . ";";
                      if ($DB->query($sql2)) {
-                        $success = $this->groups($rows, $DB);
+                        $success = $this->groupChange($rows, $DB);
                      } else {
                         $success = false;
                      }
@@ -156,7 +156,7 @@ class PluginautotasksConfig extends CommonDBTM
     *
     * @return boolean Selon si cela s'est bien déroulé
     */
-    function groups($row, $DB) {
+   function groupChange($row, $DB) {
       // Vérification
       // On change l'affiliation de ce ticket à ce groupe
       $sql = "UPDATE glpi_groups_tickets SET groups_id = " . $row['groups_id_tech'] . " WHERE tickets_id = " . $row['tickets_id'] . ";";
@@ -170,6 +170,30 @@ class PluginautotasksConfig extends CommonDBTM
       }
    }
 
+   /**
+    * Fonction permettant de créer l'attribution du groupe de la tâche suivante au ticket dans le cas où aucun n'était attribué
+    *
+    *TO DO
+    * 
+    * @param mixed row Lignes récupérées via la requête précédente
+    * @param mysqli $DB Base de données 
+    *
+    * @return boolean Selon si cela s'est bien déroulé
+    */
+    function groupCreate($row, $DB) {
+      // Vérification
+      // On change l'affiliation de ce ticket à ce groupe
+      $sql = "UPDATE glpi_groups_tickets SET groups_id = " . $row['groups_id_tech'] . " WHERE tickets_id = " . $row['tickets_id'] . ";";
+      // returns true or false depending on success
+      if ($DB->query($sql)) {
+         $this->logs("Attribution du groupe " . $row['groups_id_tech'] . " au ticket " . $row['tickets_id'] . " réussie");
+         return true;
+      } else {
+         $this->logs("Echec de l'attribution du groupe " . $row['groups_id_tech'] . " au ticket " . $row['tickets_id']);
+         return false;
+      }
+   }
+   
    /**
     * Cette fonction permet de savoir si l'utilisateur connecté a déjà effectué un "hardreset" ou non, si oui, celui-ci ne se fera pas
     *
