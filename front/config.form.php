@@ -16,8 +16,6 @@ if (isset($_GET['hardreload']) && !isset($_GET['verif'])) {
    $style = "color:red;";
 }
 
-
-// To be available when plugin in not activated
 Plugin::load('autotasks');
 Html::header("AutoTasks Config", $_SERVER['PHP_SELF'], "config", "plugins");
 echo __("<div class='main_form rss card singleaction center-h' style='width:65%; margin:0% 25% 0% 15%;'><div class='ui-widget-header'><h2>Ici vous pouvez forcer l'activation de la tâche automatique du plugin soit sur les dernières 24h, soit sur toute la base (Recommandé uniquement en cas d'urgence pour les grosses bases de données)</h2></div></br>", 'autotasks');

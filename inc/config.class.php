@@ -177,8 +177,6 @@ class PluginautotasksConfig extends CommonDBTM
 
    /**
     * Fonction permettant de créer l'attribution du groupe de la tâche suivante au ticket dans le cas où aucun n'était attribué
-    *
-    * TO DO
     * 
     * @param mixed row Lignes récupérées via la requête précédente
     * @param mysqli $DB Base de données 
