@@ -39,7 +39,7 @@ class PluginautotasksConfig extends CommonDBTM
                }
             }
          } else {
-            $this->logs("");
+            $this->logs("Aucune action possible dans la base de données");
             return true;
          }
       } else {
@@ -93,24 +93,7 @@ class PluginautotasksConfig extends CommonDBTM
       return $success;
    }
 
-   /**
-    * Cette fonction permet d'insérer les logs dans la base de données
-    * 
-    * @param boolean $success Pour savoir si la tâche a été exécutée avec succès 
-    * @param mysqli $DB Base de données
-    * @param boolean $hardreset Pour savoir si c'est toute la base de données qui a été reset (default = false)
-    * 
-    * @return boolean True si la tâche a été réalisée, false si non
-    * 
-    */
-   function tasklog($success, $DB, $hardreset = false) {
-      $sql = "INSERT INTO glpi_plugin_autotaskslogs (`user`, `hardreset`, `date`,success) VALUES (" . Session::getLoginUserID() . ", " . ($hardreset?"TRUE":"FALSE") . ", DATE(NOW()), " . ($success?"TRUE":"FALSE") . ");";
-      $DB->query($sql);
-      if ($success) {
-         return true;
-      }
-      return false;
-   }
+
 
    /**
     * Fonction vérifiant si plusieurs groupes sont affiliés au ticket, renvoie false si c'est le cas, true si non
@@ -153,6 +136,7 @@ class PluginautotasksConfig extends CommonDBTM
          return false;
       }
    }
+
    /**
     * Fonction permettant d'attribuer le groupe de la tâche suivante au ticket et de supprimer celui qui était actuellement attribué
     * 
@@ -224,16 +208,34 @@ class PluginautotasksConfig extends CommonDBTM
    /**
     * Permet de logs les erreurs survenues lors des requêtes
     * 
-    * @param mixed $message Dernière erreur sql
-    * @param boolean @error Savoir si le message à envoyer est un message d'erreur ou de succès (true si erreur, false si succès)
+    * @param mixed $message Message à envoyer aux logs
     *
     * @return void
     */
    function logs($message) {
       $logger = new Logger('transactions');
-      $logstream = new StreamHandler('../tools/error.log');
+      $logstream = new StreamHandler('../tools/history.log');
       $logger->pushHandler($logstream);
 
       $logger->info($message);
    }
-}
+
+   /**
+    * Cette fonction permet d'insérer les logs dans la base de données
+    * 
+    * @param boolean $success Pour savoir si la tâche a été exécutée avec succès 
+    * @param mysqli $DB Base de données
+    * @param boolean $hardreset Pour savoir si c'est toute la base de données qui a été reset (default = false)
+    * 
+    * @return boolean True si la tâche a été réalisée, false si non
+    * 
+    */
+   function tasklog($success, $DB, $hardreset = false) {
+      $sql = "INSERT INTO glpi_plugin_autotaskslogs (`user`, `hardreset`, `date`,success) VALUES (" . Session::getLoginUserID() . ", " . ($hardreset?"TRUE":"FALSE") . ", DATE(NOW()), " . ($success?"TRUE":"FALSE") . ");";
+      $DB->query($sql);
+      if ($success) {
+         return true;
+      }
+      return false;
+   }
+}  

@@ -18,7 +18,10 @@ if (isset($_GET['hardreload']) && !isset($_GET['verif'])) {
 
 Plugin::load('autotasks');
 Html::header("AutoTasks Config", $_SERVER['PHP_SELF'], "config", "plugins");
-echo __("<div class='main_form rss card singleaction center-h' style='width:65%; margin:0% 25% 0% 15%;'><div class='ui-widget-header'><h2>Ici vous pouvez forcer l'activation de la tâche automatique du plugin soit sur les dernières 24h, soit sur toute la base (Recommandé uniquement en cas d'urgence pour les grosses bases de données)</h2></div></br>", 'autotasks');
+echo __("<div class='main_form rss card singleaction center-h' style='width:65%; margin:0% 25% 0% 15%;'>
+<div class='ui-widget-header'>
+<h2>Ici vous pouvez forcer l'activation de la tâche automatique du plugin soit sur les dernières 24h, soit sur toute la base (Recommandé uniquement en cas d'urgence pour les grosses bases de données)</h2>
+</div></br>", 'autotasks');
 echo __("<form method='GET' action=''>", 'autotasks');
 echo __("<div class='rich_text_container'><span class='btn-linkstyled left'><input type='submit' class='vsubmit' name='reset' value='Recharger les dernières 24h'></span>", 'autotasks');
 echo __("<span class='right'><input type='submit' class='vsubmit' name='hardreset' value='Recharger TOUTE la base de données'>", 'autotasks');
@@ -50,3 +53,7 @@ if (isset($_GET['hardreset'])&& isset($_GET['verif'])) {
 }
 echo "<br><br></div></form>";
 Html::footer();
+
+
+
+
