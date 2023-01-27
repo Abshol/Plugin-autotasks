@@ -8,7 +8,7 @@ class PluginautotasksAuto extends CommonDBTM
      *
      * @param $name : automatic action's name
      *
-     * @return arrray of information
+     * @return array of information
      */
     static function cronInfo($name) {
         switch ($name) {
