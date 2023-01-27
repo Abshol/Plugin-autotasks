@@ -24,7 +24,7 @@ function plugin_version_autotasks() {
    return [
       'name'           => 'autotasks',
       'version'        => autotasks_VERSION,
-      'author'         => 'Abshol',
+      'author'         => 'Axel RENAUT',
       'license'        => 'MIT License',
       'homepage'       => 'https://github.com/Abshol',
       'requirements'   => [

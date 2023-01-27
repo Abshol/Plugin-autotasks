@@ -35,6 +35,6 @@ function plugin_autotasks_uninstall() {
     global $DB;
     $query = "DROP TABLE glpi_plugin_autotaskslogs";
     $DB->query($query);
-    CronTask::unregister('AutoTasks');
+    CronTask::unregister('Config');
     return true;
 }
