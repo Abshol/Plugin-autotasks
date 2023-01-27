@@ -73,12 +73,13 @@ class PluginautotasksConfig extends CommonDBTM
                         $success = false;
                      }
                   } else {
-                     $this->groupDelete($rows, $DB);
+                     $this->groupDelete($rows, $DB, $lastGroupId);
                   }
                   $break = true;
                }
                $before = false;
             } else {
+               $lastGroupId = $rows['groups_id_tech'];
                $before = true;
             }
             if ($break) {break;}
@@ -113,6 +114,7 @@ class PluginautotasksConfig extends CommonDBTM
 
    /**
     * Fonction vérifiant si plusieurs groupes sont affiliés au ticket, renvoie false si c'est le cas, true si non
+    * Dans le cas où le groupe n'existe pas ($row['nombre'] == 0), on appelle groupCreate pour créer une affiliation à un groupe
     * 
     * @param mixed $row Lignes récupérées via la requête précédente 
     * @param mysqli $DB Base de données
@@ -122,11 +124,13 @@ class PluginautotasksConfig extends CommonDBTM
    function groupVerif($row, $DB) {
       $sql = "SELECT COUNT(*) as `nombre` FROM glpi_groups_tickets WHERE tickets_id = " . $row['tickets_id'];
       $resultset = $DB->query($sql);
-      $row = $DB->fetch_assoc($resultset);
-      if ($row['nombre'] > 1) {
+      $rows = $DB->fetch_assoc($resultset);
+      if ($rows['nombre'] > 1) {
          return false;
-      } else {
+      } else if ($rows['nombre'] == 1) {
          return true;
+      } else {
+         return $this->groupCreate($row, $DB);
       }
    }
 
@@ -135,16 +139,17 @@ class PluginautotasksConfig extends CommonDBTM
     *
     * @param mixed $row Lignes récupérées via la requête précédente 
     * @param mysqli $DB Base de données
-    * 
+    * @param int $lastGroupId Dernier id de groupe récupéré (celui que nous allons supprimer de la table) 
+    *
     * @return boolean
     */
-   function groupDelete($row, $DB) {
-      $sql = "DELETE FROM glpi_groups_tickets WHERE groups_id = ".$row['groups_id_tech']." AND tickets_id = ".$row['tickets_id'];
+   function groupDelete($row, $DB, $lastGroupId) {
+      $sql = "DELETE FROM glpi_groups_tickets WHERE groups_id = $lastGroupId AND tickets_id = ".$row['tickets_id'];
       if ($DB->query($sql)) {
-         $this->logs("Suppression de l'attribution du groupe ".$row['groups_id_tech']." au ticket ".$row['tickets_id']." réussie");
+         $this->logs("Suppression de l'attribution du groupe $lastGroupId au ticket ".$row['tickets_id']." réussie");
          return true;
       } else {
-         $this->logs("Echec de la suppression de l'attribution du groupe ".$row['groups_id_tech']." au ticket ".$row['tickets_id']);
+         $this->logs("Echec de la suppression de l'attribution du groupe $lastGroupId au ticket ".$row['tickets_id']);
          return false;
       }
    }
@@ -173,7 +178,7 @@ class PluginautotasksConfig extends CommonDBTM
    /**
     * Fonction permettant de créer l'attribution du groupe de la tâche suivante au ticket dans le cas où aucun n'était attribué
     *
-    *TO DO
+    * TO DO
     * 
     * @param mixed row Lignes récupérées via la requête précédente
     * @param mysqli $DB Base de données 
@@ -183,7 +188,7 @@ class PluginautotasksConfig extends CommonDBTM
     function groupCreate($row, $DB) {
       // Vérification
       // On change l'affiliation de ce ticket à ce groupe
-      $sql = "UPDATE glpi_groups_tickets SET groups_id = " . $row['groups_id_tech'] . " WHERE tickets_id = " . $row['tickets_id'] . ";";
+      $sql = "INSERT INTO glpi_groups_tickets (tickets_id, groups_id, `type`) VALUES (" . $row['tickets_id'] . ", " . $row['groups_id_tech'] . ",2)";
       // returns true or false depending on success
       if ($DB->query($sql)) {
          $this->logs("Attribution du groupe " . $row['groups_id_tech'] . " au ticket " . $row['tickets_id'] . " réussie");
