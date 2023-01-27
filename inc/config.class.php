@@ -39,7 +39,7 @@ class PluginautotasksConfig extends CommonDBTM
                }
             }
          } else {
-            $this->logs("", false);
+            $this->logs("");
             return true;
          }
       } else {
