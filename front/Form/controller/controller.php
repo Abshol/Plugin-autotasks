@@ -33,7 +33,7 @@ class controller {
     public function materielSub($post, $DB) {
         if(isset($post['desc']) && isset($post['tel'])) {
             if ($post['tel'] == 'Oui'){
-                if ((new demandeclass)->materiel($post, parse_ini_file('config.ini'), $DB)) {
+                if ((new demandeclass)->materiel($post, $DB)) {
                     $this->materiel("<div class='message'>Votre ticket a bien été envoyé et votre demande sera traitée sous peu</div>");
                 } else {
                    $this->materiel("<div class='error'>Une erreur est survenue lors de la création du ticket</div>");

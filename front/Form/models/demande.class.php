@@ -4,12 +4,11 @@ class demandeclass {
      * Insertion du ticket dans la base de données
      * 
      * @param mixed $post $_POST
-     * @param mixed $config Fichier de config avec les accès à la base
      * @param mysqli $DB Base de données
      * 
      * @return bool true si ça s'est bien passé, false sinon
      */
-    public function materiel($post, $config, $DB) {
+    public function materiel($post, $DB) {
         $insert = $DB->buildInsert(
             'glpi_tickets',
             [

@@ -4,12 +4,10 @@ class incidentclass {
      * Insertion du ticket dans la base de données
      * 
      * @param mixed $post $_POST
-     * @param mixed $config Fichier de config avec les accès à la base
      * 
      * @return bool true si ça s'est bien passé, false sinon
      */
-    public function incident($post, $config) {
-        $DB = new mysqli($config['host'], $config['db_user'], $config['db_pass'], $config['db_name']);
+    public function incident($post, $DB) {
         $sql = "INSERT INTO glpi_tickets (`name`, `date`, `content`) VALUES ('Incident', NOW(), ?)";
         $stmt = $DB->prepare($sql);
         $stmt->bind_param('s', $post['desc']);
