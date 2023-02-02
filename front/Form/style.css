@@ -13,10 +13,8 @@
   border-radius: 10px;
 }
 
-.autotasks .goback {
+.autotasks box-icon {
   color: white;
-  margin-left: 5%;
-  padding-left: 4%;
 }
 
 .autotasks input[type='radio'], .autotasks .inputAuto, .autotasks .autobutton {
@@ -41,9 +39,11 @@
 .autotasks .error {
     color:red;
 }
+
 .autotasks .message {
   color:rgb(0, 0, 0);
 }
+
 .autotasks .container {
   display: flex;
   flex-direction: column;
@@ -56,7 +56,9 @@
   align-items: center;
   text-align: center;
 }
-.container .container-header {
+
+.autotasks .container .container-header {
+  display: flex;
   color: white;
   font-size: 1.5em;
   flex-direction: row;
@@ -66,6 +68,12 @@
   width:100%;
   padding: 1% 0 1% 0;
 }
+
+.autotasks .header-title {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .autotasks .container .container-content {
   font-size: 1.1em;
   flex-direction: row;
@@ -83,6 +91,7 @@
   width: auto;
   margin: auto;
 }
+
 .autotasks .container .container-btn {
   background: #bababa;
   border-radius: 25px;

@@ -10,7 +10,7 @@ class index
       include('header.php');
       echo "
       <div class='container'>
-      <div class='container-header'>Quel type de ticket voulez-vous créer ?</div>
+      <div class='container-header'><span class='header-title'>Quel type de ticket voulez-vous créer ?</span></div>
       <div class='container-content'>
          <a href='?action=demande'><button class='autobutton'>Demande</button></a> <a href='?action=incident'><button class='autobutton'>Incident</button></a>
       </div>";

@@ -10,7 +10,7 @@ class demandeform
         include('header.php');
         echo "
         <div class='container'>
-            <div class='container-header'><a href='?action=' class='goback'><i class='gg-mail-reply'></i></a>Type de Demande</div>
+            <div class='container-header'><a href='?action=' ><box-icon name='left-arrow-alt' color='#ffffff'></box-icon></a><span class='header-title'>Type de Demande</span></div>
             <div class='container-content'><a href='?action=materiel'><button class='autobutton'>Demande de matériel</button></a></div>
         </div>";
         include('footer.php');
@@ -26,7 +26,7 @@ class demandeform
     public function materiel($mess = ''){
         include('header.php');
 ?>      <div class='container'>
-            <div class='container-header'><a href='?action=demande' class='goback'><i class="gg-mail-reply"></i></a>Demande de matériel</div>
+            <div class='container-header'><a href='?action=demande'><box-icon name='left-arrow-alt' color='#ffffff'></box-icon></a><span class='header-title'>Demande de matériel</span></div>
             <div class='container-content'>
             <form action='?action=materielSub' method='get'>
             <div class='container-form'>

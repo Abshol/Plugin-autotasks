@@ -12,7 +12,7 @@ class incidentform
     {
         include('header.php');
         ?>      <div class='container'>
-                    <div class='container-header'><a href='?action=' class='goback'><i class='gg-mail-reply'></i></a>Incident</div>
+                    <div class='container-header'><a href='?action=' ><box-icon name='left-arrow-alt' color='#ffffff' ></box-icon></a><span class='header-title'>Incident</span></div>
                     <div class='container-content'>
                     <form action='?action=incidentSub' method='POST'>
                     <div class='container-form'>
