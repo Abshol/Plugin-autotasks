@@ -1,5 +1,5 @@
 .autotasks .autobutton {
-  border-radius: 5px;
+  border-radius: 25px;
   padding:1%;
   width:10em;
   background-color: #e0e0e0;
@@ -10,7 +10,7 @@
 
 .autotasks .inputAuto:hover, .autotasks .autobutton:hover {
   background-color: #FEC95C;
-  border-radius: 10px;
+  border-radius: 5px;
 }
 
 .autotasks box-icon {
@@ -22,7 +22,7 @@
 }
 
 .autotasks .inputAuto {
-  border-radius: 5px;
+  border-radius: 25px;
   background-color:  #e0e0e0;
   border: rgb(16, 236, 203);
   width: 23%;
