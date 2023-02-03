@@ -29,7 +29,7 @@ function plugin_version_autotasks() {
       'homepage'       => 'https://github.com/Abshol',
       'requirements'   => [
          'glpi'   => [
-            'min' => '9.5.0'
+            'min' => '9.5.0',
             'max' => '9.5.12'
          ]
       ]
