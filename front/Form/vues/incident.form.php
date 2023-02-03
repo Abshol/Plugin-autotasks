@@ -14,12 +14,12 @@ class incidentform
         ?>      <div class='container'>
                     <div class='container-header'><a href='?action=' ><box-icon name='left-arrow-alt' color='#ffffff' ></box-icon></a><span class='header-title'>Incident</span></div>
                     <div class='container-content'>
-                    <form action='?action=incidentSub' method='POST'>
+                    <form action='?action=incidentSub' method='GET'>
                     <div class='container-form'>
                         <div class='description'>
                             <textarea class='editor'id='editor'name='desc' cols='15' rows='5' placeholder='Décrivez votre problème' required></textarea>
                         </div>
-                        <input type='submit' name='materielSub' value='Envoyer'>
+                        <input class='inputAuto' type='submit' name='incidentSub' value='Envoyer'>
                         <?php echo $mess;?>
                     </div>
                     </form>

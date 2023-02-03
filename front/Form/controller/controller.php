@@ -57,7 +57,7 @@ class controller {
      */
     public function incidentSub($post, $DB) {
         if (isset($post['desc'])) {
-            if ((new incidentclass)->incident($post, parse_ini_file('config.ini'))) {
+            if ((new incidentclass)->incident($post, $DB)) {
                 $this->incident("<span class='message'>Votre ticket a bien été crée et votre demande sera traitée dès que possible</span>");
             } else {
                 $this->incident("<span class='error'>Une erreur est survenue lors de la création du ticket</span>");
