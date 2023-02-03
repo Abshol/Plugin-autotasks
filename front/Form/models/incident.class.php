@@ -8,12 +8,21 @@ class incidentclass {
      * @return bool true si ça s'est bien passé, false sinon
      */
     public function incident($post, $DB) {
-        $sql = "INSERT INTO glpi_tickets (`name`, `date`, `content`) VALUES ('Incident', NOW(), ?)";
-        $stmt = $DB->prepare($sql);
-        $stmt->bind_param('s', $post['desc']);
+        $insert = $DB->buildInsert(
+            'glpi_tickets',
+            [
+                'name' => new Queryparam(),
+                'date' => new Queryparam(),
+                'content' => new Queryparam()
+            ]
+        );
+        $stmt = $DB->prepare($insert);
+        $nom = "Incident";
+        $date = date('Y-m-d H:i:s');
+        $stmt->bind_param('sss', $nom, $date, $post['desc']);
+
         if ($stmt->execute()) {
-            $ticketId = $DB->insert_id;
-            $sql = "INSERT INTO glpi_groups_tickets (tickets_id, groups_id, `type`) VALUES ($ticketId, 6, 2)";
+            $sql = "INSERT INTO glpi_groups_tickets (tickets_id, groups_id, `type`) VALUES (LAST_INSERT_ID(), 6, 2)";
             if ($DB->query($sql)) {
                 return true;
             }
