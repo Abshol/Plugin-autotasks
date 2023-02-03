@@ -30,7 +30,7 @@ function plugin_version_autotasks() {
       'requirements'   => [
          'glpi'   => [
             'min' => '9.5.0',
-            'max' => '9.5.12'
+            'max' => '10'
          ]
       ]
    ];
