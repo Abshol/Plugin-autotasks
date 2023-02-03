@@ -10,7 +10,7 @@ Enfin il s'occupera de l'escalation des tâches selon plusieurs cas:
     -Si le ticket est déjà affilié à un groupe, il va remplacer cette affiliation avec celle du nouveau groupe
     -Si le ticket a plusieurs groupes affiliés, il va supprimer le groupe qui a fini sa tâche
 
-Une page web est disponible avec le plug-in permettant de forcer la tâche à s'activer sans passer par le cron.
+Le fichier config.form.php est une page web permettant de forcer la tâche à s'activer sans passer par le cron.
 Il y est aussi possible de faire parcourir le plug-in dans toute la base de données (et pas seulement dans les données modifiées dans les dernières 24h),
 cette dernière action n'est recommandée que lors de l'installation du plug-in ou en cas d'urgence car elle peut prendre du temps dans les grosses bases de données. (Il est par ailleurs impossible de le faire plus d'une fois par jour)
 
