@@ -24,12 +24,13 @@ function plugin_version_autotasks() {
    return [
       'name'           => 'autotasks',
       'version'        => autotasks_VERSION,
-      'author'         => 'Axel RENAUT',
+      'author'         => 'Abshol',
       'license'        => 'MIT License',
       'homepage'       => 'https://github.com/Abshol',
       'requirements'   => [
          'glpi'   => [
             'min' => '9.5.0'
+            'max' => '9.5.12'
          ]
       ]
    ];
