@@ -1,6 +1,6 @@
 INFORMATIONS
 
-Un plug-in crée pendant un stage pour aller avec GLPI
+Un plug-in crée pendant un stage pour accompagner GLPI dans la gestion des tickets et de l'escalation des tâches
 
 Ce plug-in va, toutes les 5 minutes (par défaut), parcourir la base de données à la recherche de tâches de tickets ayant été cochées comme "fini" (state=2 dans la table glpi_tickets) dans les dernières 24h.
 S'il en trouve, il va passer la tâche suivante de l'état "information" (state = 0) à "à faire" (state = 1) sauf si celle-ci a déjà été faite.
