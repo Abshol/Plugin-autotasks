@@ -13,14 +13,24 @@ Enfin il s'occupera de l'escalation des tâches selon plusieurs cas:
 Le fichier config.form.php est une page web permettant de forcer la tâche à s'activer sans passer par le cron.
 Il y est aussi possible de faire parcourir le plug-in dans toute la base de données (et pas seulement dans les données modifiées dans les dernières 24h),
 cette dernière action n'est recommandée que lors de l'installation du plug-in ou en cas d'urgence car elle peut prendre du temps dans les grosses bases de données. (Il est par ailleurs impossible de le faire plus d'une fois par jour)
+Il y est possible d'activer deux pages web:
 
-Le fichier web.php a la même utilitée, cependant il est complétement à part de glpi, permettant de vérifier si les erreurs que vous avez viennent de votre glpi, ou de votre base de données. Pour y accéder, supprimez le contenu du fichier .htaccess
+La page web.php ayant la même utilitée que le fichier config.form.php, mais en étant complétement à part de glpi, permettant de vérifier si les erreurs que vous avez viennent de votre glpi, ou d'ailleurs'.
+Un formulaire de création de tickets
 
 ------------------------------
 
-Un formulaire de création de tickets est fourni avec le plug-in, si vous souhaitez le supprimer, supprimez le dossier "Form" dans le dossier "front" et enlevez la ligne 29 du fichier "config.form.php" dans le dossier "front"
+BASE DE DONNÉES
 
--------------------------------
+Le plug-in crée deux tables dans la base de données de glpi, glpi_plugin_autotaskslogs et glpi_plugin_autotasksconf:
+
+- glpi_plugin_autotaskslogs:
+    Cette table va logger tout les refresh effectués manuellement, renseignant l'id de l'utilisateur, si c'était une action sur toute la base de données (hardreset = 1) ou juste sur les dernières 24 heures (hardreset = 0), la date de celui-ci, et si l'action à échouée (success = 0) ou non (success = 1)
+
+- glpi_plugin_autotasksconf:
+    Cette table sert de configuration, elle permet d'activer et de désactiver les pages web.php et le formulaire de création de tickets par l'intermédiaire de la page config.form.php
+
+------------------------------
 
 INSTALLATION
 

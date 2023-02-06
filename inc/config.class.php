@@ -238,4 +238,44 @@ class PluginautotasksConfig extends CommonDBTM
       }
       return false;
    }
+
+   /**
+    * Recherches si la configuration passée en paramètre est activée (True) ou non (False)
+    *
+    * @param string $recherche Nom de l'option à rechercher
+    *
+    * @return boolean Vrai si l'option est activée, False si non
+    */
+   function getConf($recherche) {
+      global $DB;
+      $sql = "SELECT * FROM glpi_plugin_autotasksconf WHERE name = '$recherche'";
+      if ($result = $DB->query($sql)) {
+         $row = $DB->fetch_assoc($result);
+         if ($row['activated'] == 0) {
+            return false;
+         } else {
+            return true;
+         }
+      } else {
+         die('Erreur lors de la recherche des configurations');
+      }
+   }
+
+   function activateConf($name) {
+      global $DB;
+      $sql = "UPDATE `glpi_plugin_autotasksconf` SET `activated`= 1 WHERE name = '$name'";
+      if ($DB->query($sql)) {
+         return true;
+      }
+      return false;
+   }
+
+   function deactivateConf($name) {
+      global $DB;
+      $sql = "UPDATE `glpi_plugin_autotasksconf` SET `activated`= 0 WHERE name = '$name'";
+      if ($DB->query($sql)) {
+         return true;
+      }
+      return false;
+   }
 }  

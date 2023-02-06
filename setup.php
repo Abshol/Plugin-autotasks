@@ -1,5 +1,5 @@
 <?php
-define('autotasks_VERSION', '1.2.5');
+define('autotasks_VERSION', '2.0.0');
 global $CFG_GLPI;
 /**
  * Init the hooks of the plugins - Needed

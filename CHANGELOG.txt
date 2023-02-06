@@ -1,0 +1,3 @@
+Refonte du CSS de la page config.form.php basée sur le formlulaire de création de tickets du plug-in
+
+Ajout d'options de debug permettant d'activer / désactiver plus facilement le formulaire de création de tickets et la page web.php

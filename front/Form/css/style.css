@@ -32,15 +32,22 @@
   transition: border-radius 0.2s linear;
 }
 
+.autotasks .inputAuto.config  {
+  width: auto;
+  padding: 0 5% 0 5%;
+}
+
 .autotasks .container .autobutton:hover {
   background-color: #FEC95C;
 }
 
 .autotasks .error {
-    color:red;
+  padding: 2%;
+  color:red;
 }
 
 .autotasks .message {
+  padding: 2%;
   color:rgb(0, 0, 0);
 }
 
@@ -57,7 +64,7 @@
   text-align: center;
 }
 
-.autotasks .container .container-header {
+.autotasks .container-header {
   display: flex;
   color: white;
   font-size: 1.5em;
@@ -69,12 +76,20 @@
   padding: 1% 0 1% 0;
 }
 
+.autotasks .container-header.config {
+  flex-direction: column;
+}
+
 .autotasks .header-title {
   margin-left: auto;
   margin-right: auto;
 }
 
-.autotasks .container .container-content {
+.autotasks .container-header .header-desc {
+  font-size: 0.6em;
+}
+
+.autotasks .container-content {
   font-size: 1.1em;
   flex-direction: row;
   border-radius: 1px;
@@ -86,19 +101,35 @@
   background:#cdcdcd;
 }
 
-.autotasks .container .container-form {
+.autotasks .container-form {
   flex-direction: column;
   width: auto;
   margin: auto;
 }
 
-.autotasks .container .container-btn {
+.autotasks .container-form.config {
+  width: 60%;
+}
+
+.autotasks .container-btn {
   background: #bababa;
   border-radius: 25px;
   align-items: center;
   text-align: center;
   padding: 0 10% 0 10%;
   margin: 0 20% 0 20%;
+}
+
+.autotasks .form-object {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 5%;
+}
+
+.autotasks .form-object input[type='submit'] {
+  width: 100%;
 }
 
 .autotasks .description {
@@ -139,7 +170,13 @@
   padding: 1.2%;
   margin: 0 20% 0 20%;
   transition: border-radius 0.2s linear;
+  transition: margin 1s linear;
+
 }
+
+.autotasks  .menu-btn.config {
+  margin:auto;
+} 
 
 .autotasks .menu-btn:hover {
   background-color: rgb(34, 215, 188);
@@ -160,8 +197,17 @@
   font-size: 0.8em;
 }
 
+.autotasks .drop-container.config.show{
+  flex-direction: column;
+}
+
 .autotasks .drop-container.show {
-  display: block;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;  
+  background:rgb(242, 242, 242);
+  border-radius: 10px;
 }
 
 .autotasks .drop-container.show.animate-out {
