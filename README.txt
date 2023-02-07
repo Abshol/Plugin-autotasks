@@ -53,4 +53,4 @@ N'utilisez le fichier web.php qu'en cas de tests !
 
 TO DO
 
-Table de logs pour les changements de configurations
+Table de logs pour les changements de configurations - DONE
