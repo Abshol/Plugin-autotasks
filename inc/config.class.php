@@ -231,6 +231,13 @@ class PluginautotasksConfig extends CommonDBTM
       return false;
    }
 
+   function getNumbHardRUser($userid, $DB) {
+      $sql = "SELECT COUNT(*) AS user FROM glpi_plugin_autotaskslogs WHERE user = $userid AND `date` = DATE(NOW()) AND hardreset = 1;";
+      if ($result = $DB->query($sql)) {
+         $row = $DB->fetch_assoc($result);
+         return $row['user'];
+      }
+   }
    /**
     * Permet de logs les erreurs survenues lors des requêtes
     * 

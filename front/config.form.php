@@ -146,10 +146,10 @@ echo __("<link href='Form/css/style.css' rel='stylesheet'>
                   $web
                   $form
                </div>
-               <div class='form-object config'>
+               <div class='form-object config' id='focusInput'>
                   <label for='numbHardR'>Nombre de 'hard-reset' authorisés par comptes:</label>
                   <input type='number' name='numbHardR' min='0' id='numbHardR' placeholder='Defaut=1 - Actuel=".$autotsk->getNumbHardR($DB)."'>
-                  <input type='submit' class='inputAuto subb' name='envoyer' value='Enregistrer les modifications'>
+                  <input type='submit' id='focus' class='inputAuto subb' name='envoyer' value='Enregistrer les modifications'>
                </div>
                <div class='dropdown-menu config'>
                   <div class='menu-btn config'>Débug</div>
@@ -158,6 +158,7 @@ echo __("<link href='Form/css/style.css' rel='stylesheet'>
                      <div class='form-object'>
                         <input type='submit' class='inputAuto config' name='hardreset' value='Recharger TOUTE la base de données' style='width:110%'>
                         <span class='checkbox'><input type='checkbox' name='verif' id='verif' value='true'><label for='verif'>Confirmez votre action</label></span>
+                        <span class='desc'>Vous L'avez fait <strong>".$autotsk->getNumbHardRUser(Session::getLoginUserID(), $DB)."</strong> fois aujourd'hui</span>
                      </div>
                   </div>
                </div>

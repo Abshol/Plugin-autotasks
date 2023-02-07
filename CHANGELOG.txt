@@ -1,5 +1,3 @@
-Début de l'application
+Ajout d'une fonctionnalité javascript faisant qu'en appuyant sur "entrée" dans le menu de configuration, le boutton pressé sera celui qui enregistrera les modifications
 
-Refonte du code de la page de configurations
-
-Ajout d'une fonctionnalité permettant de modifier le nombre de fois qu'il est possible de faire un "hard-reset" par jours
+Ajout de fonctions dans la class et le formulaire de config
