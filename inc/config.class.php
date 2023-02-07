@@ -296,14 +296,14 @@ class PluginautotasksConfig extends CommonDBTM
    }
 
    /**
-    * Supprime tous les logs dattant de 6 mois ou plus (En test)
+    * Supprime tous les logs dattant de 6 mois ou plus
     *
     * @param mysqli $DB Base de données
     *
     * @return boolean
     */
    function delTaskLogs($DB) {
-      $sql = "DELETE FROM glpi_plugin_autotaskslogs WHERE date <= DATE_ADD(DATE(NOW()),INTERVAL -1 DAY);"; //Tout les 1 jours pour l'instant pour cause de test
+      $sql = "DELETE FROM glpi_plugin_autotaskslogs WHERE date <= DATE_ADD(DATE(NOW()),INTERVAL -6 MONTH);";
       return $DB->query($sql);
    }
 

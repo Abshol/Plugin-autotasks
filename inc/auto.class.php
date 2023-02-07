@@ -36,7 +36,7 @@ class PluginautotasksAuto extends CommonDBTM
          } else {
             $autotsk->logs("Erreur lors du lancement de la tâche automatique");
          }
-         // $success = $autotsk->delTaskLogs($DB); TESTING
+         $success = $autotsk->delTaskLogs($DB);
          return intval($success);
       }
 }
