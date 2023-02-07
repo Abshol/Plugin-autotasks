@@ -19,22 +19,36 @@ function plugin_autotasks_install() {
         if (!$DB->query($query)) {
             $query = "DROP TABLE glpi_plugin_autotaskslogs";
             die("Erreur creation table glpi_plugin_autotaskslogs" . $DB->error);
-        }
-
+        } 
+    }
+    if (!$DB->TableExists("glpi_plugin_autotasksconf")) {
         $query = "CREATE TABLE `glpi_plugin_autotasksconf` (`name` VARCHAR(50) NOT NULL , `activated` BOOLEAN, `description` VARCHAR(300) NOT NULL, `number` INT, PRIMARY KEY (`name`));";
         if (!$DB->query($query)) {
             $query = "DROP TABLE glpi_plugin_autotasksconf";
             $DB->query($query);
-            die("Erreur creation table glpi_plugin_autotasksconf". $DB->error);
-        } 
-            
+            die("Erreur creation table glpi_plugin_autotasksconf" . $DB->error);
+        }
+
         $query = "INSERT INTO `glpi_plugin_autotasksconf` (`name`, `activated`, `description`, `number`) VALUES ('webphp', FALSE, 'Fichier web de débug', NULL), ('form', FALSE, 'Formulaire de création de tickets', NULL), ('maxHardR', NULL, 'Nombre maximum de Hard Reset authorisés par jours (défaut = 1)', 1)";
         if (!$DB->query($query)) {
             $query = "DROP TABLE glpi_plugin_autotasksconf";
             $DB->query($query);
-            die("Erreur lors de l'insertion des configurations  ". $DB->error);
+            die("Erreur lors de l'insertion des configurations  " . $DB->error);
         }
-
+    }
+    if (!$DB->TableExists("glpi_plugin_autotaskslogs_changeconf")) {
+        $query = "CREATE TABLE `glpi_plugin_autotaskslogs_changeconf` (`id` INT NOT NULL AUTO_INCREMENT , `user` INT NOT NULL , `config` VARCHAR(50) NOT NULL, `date` DATE NOT NULL, `description` VARCHAR(500) NOT NULL, PRIMARY KEY (`id`));";
+        $DB->query($query) or die("Erreur creation table glpi_plugin_autotaskslogs_changeconf". $DB->error);
+        $query = "ALTER TABLE `glpi_plugin_autotaskslogs_changeconf` ADD FOREIGN KEY (`user`) REFERENCES glpi_users(`id`);";
+        if (!$DB->query($query)) {
+            $query = "DROP TABLE glpi_plugin_autotaskslogs_changeconf";
+            die("Erreur creation table glpi_plugin_autotaskslogs_changeconf" . $DB->error);
+        } 
+        $query = "ALTER TABLE `glpi_plugin_autotaskslogs_changeconf` ADD FOREIGN KEY (`config`) REFERENCES glpi_plugin_autotasksconf(`name`);";
+        if (!$DB->query($query)) {
+            $query = "DROP TABLE glpi_plugin_autotaskslogs_changeconf";
+            die("Erreur creation table glpi_plugin_autotaskslogs_changeconf" . $DB->error);
+        } 
     }
     //execute the whole migration
     $migration->executeMigration();
@@ -50,6 +64,8 @@ function plugin_autotasks_uninstall() {
     $query = "DROP TABLE glpi_plugin_autotaskslogs";
     $DB->query($query);
     $query = "DROP TABLE glpi_plugin_autotasksconf";
+    $DB->query($query);
+    $query = "DROP TABLE glpi_plugin_autotaskslogs_changeconf";
     $DB->query($query);
     CronTask::unregister('Config');
     return true;

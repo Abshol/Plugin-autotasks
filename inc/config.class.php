@@ -304,9 +304,36 @@ class PluginautotasksConfig extends CommonDBTM
     */
    function delTaskLogs($DB) {
       $sql = "DELETE FROM glpi_plugin_autotaskslogs WHERE date <= DATE_ADD(DATE(NOW()),INTERVAL -6 MONTH);";
-      return $DB->query($sql);
+      if ($DB->query($sql)) {
+         $sql = "DELETE FROM glpi_plugin_autotaskslogs_changeconf WHERE date <= DATE_ADD(DATE(NOW()),INTERVAL -6 MONTH);";
+         return $DB->query($sql);
+      }
+      return false;
    }
 
+   /**
+    * Insère dans les logs les changements dans la configuration du plug-in
+    *
+    * @param mysqli $DB Base de données
+    * @param int $user Id de l'utilisateur connecté
+    * @param string $config Configuration modifiée
+    * @param string $description Description de l'action
+    *
+    * @return bool Si l'action s'est bien passée ou non
+    */
+   function confLog($DB, $user, $config, $description) {
+      $insert = $DB->buildInsert(
+         'glpi_plugin_autotaskslogs_changeconf', 
+         ['user' => new Queryparam(), 'config' => new Queryparam(), 'date' => new Queryparam(), 'description' => new Queryparam()]
+      );
+      $stmt=$DB->prepare($insert);
+      $date = date('Y-m-d H:i:s');
+      $stmt->bind_param('isss', $user, $config, $date, $description);
+      if ($stmt->execute()) {
+         return true;
+      }
+      return false;
+   }
    /**
     * Recherches si la configuration passée en paramètre est activée (True) ou non (False)
     *

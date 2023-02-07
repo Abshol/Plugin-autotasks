@@ -24,13 +24,20 @@ Modifier le nombre d'action sur toute la base de données (appelée "hard-reset"
 
 BASE DE DONNÉES
 
-Le plug-in crée deux tables dans la base de données de glpi, glpi_plugin_autotaskslogs et glpi_plugin_autotasksconf:
+Le plug-in crée plusieurs tables dans la base de données pour son bon fonctionnement:
 
 - glpi_plugin_autotaskslogs:
     Cette table va logger tout les refresh effectués manuellement, renseignant l'id de l'utilisateur, si c'était une action sur toute la base de données (hardreset = 1) ou juste sur les dernières 24 heures (hardreset = 0), la date de celui-ci, et si l'action à échouée (success = 0) ou non (success = 1)
 
 - glpi_plugin_autotasksconf:
     Cette table sert de configuration, elle permet d'activer et de désactiver les pages web.php et le formulaire de création de tickets par l'intermédiaire de la page config.form.php
+
+- glpi_plugin_autotaskslogs_changeconf:
+    Cette table va logger toutes actions qui va tenter de changer la configuration du plug-in
+
+**
+Les tables servant à logger auront leurs données automatiquement supprimées si celles-ci dépassent sont renseignées depuis plus de 6 mois conformément aux lois de protections des données
+**
 
 ------------------------------
 
@@ -46,6 +53,4 @@ N'utilisez le fichier web.php qu'en cas de tests !
 
 TO DO
 
-Documentation des nouvelles fonctions - DONE
-
-Suppression automatique des logs vieux de 6 mois - DONE
+Table de logs pour les changements de configurations

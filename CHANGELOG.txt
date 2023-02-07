@@ -1,3 +1,5 @@
-Ajout de documentation
+Ajout d'une table de logs renseignant tout les changements dans les configurations
 
-Ajout d'une fonction qui supprime les logs de la base de données vieux de plus de 6 mois (En test)
+Si les logs sont datés de plus de 6 mois, ils sont automatiquement supprimés via le cron
+
+Mise à jour de la documentation

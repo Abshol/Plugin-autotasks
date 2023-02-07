@@ -37,11 +37,15 @@ if (getConf($autotsk, 'form')) {
 if (isset($_GET['envoyer'])) {
    if (isset($_GET['numbHardR'])) {
       if (!$autotsk->hardreset(Session::getLoginUserID(), $DB)) {
-         $nombre = intval($_GET['numbHardR']);
-         $nombre *= $nombre;
-         $nombre = sqrt($nombre);
-         if ($autotsk->changeHardR($DB, $nombre)) {
-            header('Location: ./config.form.php');
+         if ((new PluginautotasksConfig)->confLog($DB, Session::getLoginUserID(), 'maxHardR', 'Changement de la limite de '.(new PluginautotasksConfig)->getNumbHardR($DB).' à '.$_GET['numbHardR'])) {
+            $nombre = intval($_GET['numbHardR']);
+            $nombre *= $nombre;
+            $nombre = sqrt($nombre);
+            if ($autotsk->changeHardR($DB, $nombre)) {
+               header('Location: ./config.form.php');
+            } else {
+               header('Location: ./config.form.php?mess=HRChangeErr');
+            }
          } else {
             header('Location: ./config.form.php?mess=HRChangeErr');
          }
@@ -51,25 +55,41 @@ if (isset($_GET['envoyer'])) {
    }
 }
 if (isset($_GET['webActivate'])) {
-   if (!$autotsk->activateConf('webphp')) {
+   if ((new PluginautotasksConfig)->confLog($DB, Session::getLoginUserID(), 'webphp', 'Activation de web.php')) {
+      if (!$autotsk->activateConf('webphp')) {
+         header('Location: ./config.form.php?mess=ErrActDeact');
+      }
+   } else {
       header('Location: ./config.form.php?mess=ErrActDeact');
    }
    header('Location: ./config.form.php');
 }
 if (isset($_GET['formActivate'])) {
-   if (!$autotsk->activateConf('form')) {
+   if ((new PluginautotasksConfig)->confLog($DB, Session::getLoginUserID(), 'form', 'Activation du formulaire')) {
+      if (!$autotsk->activateConf('form')) {
+         header('Location: ./config.form.php?mess=ErrActDeact');
+      }
+   } else {
       header('Location: ./config.form.php?mess=ErrActDeact');
    }
    header('Location: ./config.form.php');
 }
 if (isset($_GET['webDeactivate'])) {
-   if (!$autotsk->deactivateConf('webphp')) {
+   if ((new PluginautotasksConfig)->confLog($DB, Session::getLoginUserID(), 'webphp', 'Désactivation de web.php')) {
+      if (!$autotsk->deactivateConf('webphp')) {
+         header('Location: ./config.form.php?mess=ErrActDeact');
+      }
+   } else {
       header('Location: ./config.form.php?mess=ErrActDeact');
    }
    header('Location: ./config.form.php');
 }
 if (isset($_GET['formDeactivate'])) {
-   if (!$autotsk->deactivateConf('form')) {
+   if ((new PluginautotasksConfig)->confLog($DB, Session::getLoginUserID(), 'form', 'Désactivation du formulaire')) {
+      if (!$autotsk->deactivateConf('form')) {
+         header('Location: ./config.form.php?mess=ErrActDeact');
+      }
+   } else {
       header('Location: ./config.form.php?mess=ErrActDeact');
    }
    header('Location: ./config.form.php');
