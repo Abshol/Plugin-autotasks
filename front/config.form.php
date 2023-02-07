@@ -15,20 +15,20 @@ Session::checkRight("config", UPDATE);
 
 Plugin::load('autotasks');
 
-$autotsk = new PluginautotasksConfig();
+(new PluginautotasksConfig)
 $web = '';
 $form = '';
 $formButton = '';
 $webButton = '';
 
-if (getConf($autotsk, 'webphp')) {
+if (getConf('webphp')) {
    $web = "<input type='submit' class='inputAuto' name='webDeactivate' value='Désactiver la page web.php de débug'>";
    $webButton = "<a href='../web.php'><button class='autobutton'>Web.php</button></a>";
 } else {
    $web = "<input type='submit' class='inputAuto' name='webActivate' value='Activer la page web.php de débug'>";
 }
 
-if (getConf($autotsk, 'form')) { 
+if (getConf('form')) { 
    $form = "<input type='submit' class='inputAuto' name='formDeactivate' value='Désactiver le formulaire de débug'>";
    $formButton = "<a href='Form/'><button class='autobutton'>Aller au formulaire</button></a>";
 } else {
@@ -36,12 +36,12 @@ if (getConf($autotsk, 'form')) {
 }
 if (isset($_GET['envoyer'])) {
    if (isset($_GET['numbHardR'])) {
-      if (!$autotsk->hardreset(Session::getLoginUserID(), $DB)) {
+      if (!(new PluginautotasksConfig)->hardreset(Session::getLoginUserID(), $DB)) {
          if ((new PluginautotasksConfig)->confLog($DB, Session::getLoginUserID(), 'maxHardR', 'Changement de la limite de '.(new PluginautotasksConfig)->getNumbHardR($DB).' à '.$_GET['numbHardR'])) {
             $nombre = intval($_GET['numbHardR']);
             $nombre *= $nombre;
             $nombre = sqrt($nombre);
-            if ($autotsk->changeHardR($DB, $nombre)) {
+            if ((new PluginautotasksConfig)->changeHardR($DB, $nombre)) {
                header('Location: ./config.form.php');
             } else {
                header('Location: ./config.form.php?mess=HRChangeErr');
@@ -56,7 +56,7 @@ if (isset($_GET['envoyer'])) {
 }
 if (isset($_GET['webActivate'])) {
    if ((new PluginautotasksConfig)->confLog($DB, Session::getLoginUserID(), 'webphp', 'Activation de web.php')) {
-      if (!$autotsk->activateConf('webphp')) {
+      if (!(new PluginautotasksConfig)->activateConf('webphp')) {
          header('Location: ./config.form.php?mess=ErrActDeact');
       }
    } else {
@@ -66,7 +66,7 @@ if (isset($_GET['webActivate'])) {
 }
 if (isset($_GET['formActivate'])) {
    if ((new PluginautotasksConfig)->confLog($DB, Session::getLoginUserID(), 'form', 'Activation du formulaire')) {
-      if (!$autotsk->activateConf('form')) {
+      if (!(new PluginautotasksConfig)->activateConf('form')) {
          header('Location: ./config.form.php?mess=ErrActDeact');
       }
    } else {
@@ -76,7 +76,7 @@ if (isset($_GET['formActivate'])) {
 }
 if (isset($_GET['webDeactivate'])) {
    if ((new PluginautotasksConfig)->confLog($DB, Session::getLoginUserID(), 'webphp', 'Désactivation de web.php')) {
-      if (!$autotsk->deactivateConf('webphp')) {
+      if (!(new PluginautotasksConfig)->deactivateConf('webphp')) {
          header('Location: ./config.form.php?mess=ErrActDeact');
       }
    } else {
@@ -86,7 +86,7 @@ if (isset($_GET['webDeactivate'])) {
 }
 if (isset($_GET['formDeactivate'])) {
    if ((new PluginautotasksConfig)->confLog($DB, Session::getLoginUserID(), 'form', 'Désactivation du formulaire')) {
-      if (!$autotsk->deactivateConf('form')) {
+      if (!(new PluginautotasksConfig)->deactivateConf('form')) {
          header('Location: ./config.form.php?mess=ErrActDeact');
       }
    } else {
@@ -125,8 +125,8 @@ switch($_GET['mess']) {
 }
 if (isset($_GET['reset'])) {
    $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, id, tickets_id, date_mod, state FROM glpi_tickettasks WHERE date_mod BETWEEN DATE(NOW()) - interval 1 day AND DATE(NOW()) + interval 1 day AND state = 2";
-   $reussite = $autotsk->starttask($sql);
-   if ($autotsk->tasklog($reussite, $DB)) {
+   $reussite = (new PluginautotasksConfig)->starttask($sql);
+   if ((new PluginautotasksConfig)->tasklog($reussite, $DB)) {
             header('Location: ./config.form.php?mess=resetSucc');
    } else {
       header('Location: ./config.form.php?mess=resetErr');
@@ -135,12 +135,12 @@ if (isset($_GET['reset'])) {
 
 if (isset($_GET['hardreset'])) {
    if (isset($_GET['verif'])) {
-      if ($autotsk->hardreset(Session::getLoginUserID(), $DB)) {
+      if ((new PluginautotasksConfig)->hardreset(Session::getLoginUserID(), $DB)) {
          header('Location: ./config.form.php?mess=HRLimit');
       } else {
          $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, id, tickets_id, date_mod, state FROM glpi_tickettasks WHERE state = 2";
-         $reussite = $autotsk->starttask($sql);
-         if ($autotsk->tasklog($reussite, $DB, true)) {
+         $reussite = (new PluginautotasksConfig)->starttask($sql);
+         if ((new PluginautotasksConfig)->tasklog($reussite, $DB, true)) {
                   header('Location: ./config.form.php?mess=resetSucc');
          } else {
             header('Location: ./config.form.php?mess=resetErr');
@@ -168,7 +168,7 @@ echo __("<link href='Form/css/style.css' rel='stylesheet'>
                </div>
                <div class='form-object config' id='focusInput'>
                   <label for='numbHardR'>Nombre de 'hard-reset' authorisés par comptes:</label>
-                  <input type='number' name='numbHardR' min='0' id='numbHardR' placeholder='Defaut=1 - Actuel=".$autotsk->getNumbHardR($DB)."'>
+                  <input type='number' name='numbHardR' min='0' id='numbHardR' placeholder='Defaut=1 - Actuel=".(new PluginautotasksConfig)->getNumbHardR($DB)."'>
                   <input type='submit' id='focus' class='inputAuto subb' name='envoyer' value='Enregistrer les modifications'>
                </div>
                <div class='dropdown-menu config'>
@@ -178,7 +178,7 @@ echo __("<link href='Form/css/style.css' rel='stylesheet'>
                      <div class='form-object'>
                         <input type='submit' class='inputAuto config' name='hardreset' value='Recharger TOUTE la base de données' style='width:110%'>
                         <span class='checkbox'><input type='checkbox' name='verif' id='verif' value='true'><label for='verif'>Confirmez votre action</label></span>
-                        <span class='desc'>Vous L'avez fait <strong>".$autotsk->getNumbHardRUser(Session::getLoginUserID(), $DB)."</strong> fois aujourd'hui</span>
+                        <span class='desc'>Vous L'avez fait <strong>".(new PluginautotasksConfig)->getNumbHardRUser(Session::getLoginUserID(), $DB)."</strong> fois aujourd'hui</span>
                      </div>
                   </div>
                </div>
@@ -195,8 +195,8 @@ Html::footer();
 
 
 
-function getConf($autotsk, $name) {
-   if ($autotsk->getConf($name)) {
+function getConf($name) {
+   if ((new PluginautotasksConfig)->getConf($name)) {
       return true;
    } 
    return false;

@@ -1,5 +1,3 @@
-Ajout d'une table de logs renseignant tout les changements dans les configurations
+Rempacement de trumbowyg par ckedit
 
-Si les logs sont datés de plus de 6 mois, ils sont automatiquement supprimés via le cron
-
-Mise à jour de la documentation
+Amélioration du code du formulaire et de config.form.php

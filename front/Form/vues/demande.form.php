@@ -31,7 +31,7 @@ class demandeform
             <form action='?action=materielSub' method='get'>
             <div class='container-form'>
                 <div class='description'>
-                    <textarea class='editor'id='editor'name='desc' cols='15' rows='5' placeholder='Description de votre demande' required></textarea>
+                    <textarea class='editor'id='editor'name='desc' height='15%' placeholder='Description de votre demande' required></textarea>
                 </div>
                 <div class='dropdown-menu'>
                     <div class='menu-btn'>Téléphone</div>
