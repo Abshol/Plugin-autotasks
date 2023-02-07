@@ -41,3 +41,5 @@ input.addEventListener("keypress", function(event) {
     document.getElementById("focus").click();
   }
 }); 
+var editor = document.querySelector( '#editor' );
+CKEDITOR.replace('editor');

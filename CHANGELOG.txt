@@ -1,3 +1,5 @@
-Rempacement de trumbowyg par ckedit
+Améliorations mineures du code
 
-Amélioration du code du formulaire et de config.form.php
+Changement de la structure des fichiers du front/
+
+Teste d'un ajout d'un lien vers le formulaire dans le menu de glpi (sans avoir à passer par la page de configuration du plug-in)

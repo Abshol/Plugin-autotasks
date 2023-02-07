@@ -1,7 +1,7 @@
 <?php
 global $DB, $CFG_GLPI;
 
-include("../../../../inc/includes.php");
+include("../../../inc/includes.php");
 
 if (!defined('GLPI_ROOT')) {
    echo "Vous n'avez pas l'authorisation d'accéder à cette page";

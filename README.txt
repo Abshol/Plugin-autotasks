@@ -53,4 +53,4 @@ N'utilisez le fichier web.php qu'en cas de tests !
 
 TO DO
 
-Table de logs pour les changements de configurations - DONE
+Lien pour accéder aux formulaires sans passer par la page de configuration du plug-in

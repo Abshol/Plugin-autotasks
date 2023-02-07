@@ -10,6 +10,13 @@ function plugin_init_autotasks() {
    global $PLUGIN_HOOKS;
 
    $PLUGIN_HOOKS['config_page']['autotasks'] = 'front/config.form.php';
+   $PLUGIN_HOOKS['add_javascript']['autotasks'] = 'front/javascript/script.js';
+   $PLUGIN_HOOKS['add_css']['autotasks'] = 'front/css/style.css';
+   $PLUGIN_HOOKS['menu_entry']['autotasks'] = 'front/Form/';
+   $PLUGIN_HOOKS['submenu_entry']['autotasks']['options'] = [
+      'config'       => ['title'  => __('Autotasks Form'),
+                         'page'   => '/front/Form']
+   ];
    $PLUGIN_HOOKS['csrf_compliant']['autotasks'] = true;
    Plugin::registerClass('autotasks');
 

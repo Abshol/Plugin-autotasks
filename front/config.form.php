@@ -29,7 +29,7 @@ if (getConf('webphp')) {
 
 if (getConf('form')) { 
    $form = "<input type='submit' class='inputAuto' name='formDeactivate' value='Désactiver le formulaire de débug'>";
-   $formButton = "<a href='Form/'><button class='autobutton'>Aller au formulaire</button></a>";
+   $formButton = "<a href='index.php'><button class='autobutton'>Aller au formulaire</button></a>";
 } else {
    $form = "<input type='submit' class='inputAuto' name='formActivate' value='Activer le formulaire de débug'>";
 }
