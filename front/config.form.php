@@ -15,7 +15,6 @@ Session::checkRight("config", UPDATE);
 
 Plugin::load('autotasks');
 
-(new PluginautotasksConfig)
 $web = '';
 $form = '';
 $formButton = '';
