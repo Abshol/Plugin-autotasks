@@ -205,6 +205,13 @@ class PluginautotasksConfig extends CommonDBTM
       }
    }
 
+   /**
+    * Récupère le nombre de 'hard-reset' possible en une journée
+    *
+    * @param mysqli $DB Base de données
+    *
+    * @return int Nombre de fois possible en une journée
+    */
    function getNumbHardR($DB) {
       $sql = "SELECT number FROM glpi_plugin_autotasksconf WHERE name = 'maxHardR'";
       if ($result = $DB->query($sql)) {
@@ -216,6 +223,14 @@ class PluginautotasksConfig extends CommonDBTM
 
    }
 
+   /**
+    * Modifie le nombre de 'hard-reset' possible par jours
+    *
+    * @param mysqli $DB Base de données
+    * @param int $nombre Nombre envoyé par l'utilisateur
+    *
+    * @return bool Si l'action s'est bien déroulée ou non
+    */
    function changeHardR($DB, $nombre) {
       $update = $DB->buildUpdate(
          'glpi_plugin_autotasksconf', 
@@ -231,6 +246,14 @@ class PluginautotasksConfig extends CommonDBTM
       return false;
    }
 
+   /**
+    * Récupère le nombre de fois qu'un utilisateur a fait un 'hard-reset' dans la journée
+    *
+    * @param int $userid Id de l'utilisateur
+    * @param mysqli $DB Base de données
+    *
+    * @return int Nombre de fois que l'utilisateur a effectué l'action
+    */
    function getNumbHardRUser($userid, $DB) {
       $sql = "SELECT COUNT(*) AS user FROM glpi_plugin_autotaskslogs WHERE user = $userid AND `date` = DATE(NOW()) AND hardreset = 1;";
       if ($result = $DB->query($sql)) {
@@ -272,9 +295,18 @@ class PluginautotasksConfig extends CommonDBTM
       return false;
    }
 
+   /**
+    * Supprime tous les logs dattant de 6 mois ou plus (En test)
+    *
+    * @param mysqli $DB Base de données
+    *
+    * @return boolean
+    */
    function delTaskLogs($DB) {
-      
+      $sql = "DELETE FROM glpi_plugin_autotaskslogs WHERE date <= DATE_ADD(DATE(NOW()),INTERVAL -1 DAY);"; //Tout les 1 jours pour l'instant pour cause de test
+      return $DB->query($sql);
    }
+
    /**
     * Recherches si la configuration passée en paramètre est activée (True) ou non (False)
     *
@@ -297,6 +329,13 @@ class PluginautotasksConfig extends CommonDBTM
       }
    }
 
+   /**
+    * Active une configuration dont le nom est passé en paramètre
+    *
+    * @param string $name Nom de la configuration à activer
+    *
+    * @return bool Si l'action s'est bien déroulée ou non
+    */
    function activateConf($name) {
       global $DB;
       $sql = "UPDATE `glpi_plugin_autotasksconf` SET `activated`= 1 WHERE name = '$name'";
@@ -306,6 +345,13 @@ class PluginautotasksConfig extends CommonDBTM
       return false;
    }
 
+   /**
+    * Désactive une configuration dont le nom est passé en paramètre
+    *
+    * @param string $name Nom de la configuration à désactiver
+    *
+    * @return bool Si l'action s'est bien déroulée ou non
+    */
    function deactivateConf($name) {
       global $DB;
       $sql = "UPDATE `glpi_plugin_autotasksconf` SET `activated`= 0 WHERE name = '$name'";

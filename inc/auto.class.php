@@ -26,15 +26,17 @@ class PluginautotasksAuto extends CommonDBTM
       *
       * @return integer either 0 or 1
       */
-     public static function cronConfig($task = NULL) {
-        $autotsk = new PluginautotasksConfig();
-        $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, id, tickets_id, date_mod, state FROM glpi_tickettasks WHERE date_mod BETWEEN DATE(NOW()) - interval 1 day AND DATE(NOW()) + interval 1 day AND state = 2";
-        $success = $autotsk->starttask($sql);
-        if ($success) {
-           $autotsk->logs("La tâche a été effectuée avec succès");
-        } else {
-           $autotsk->logs("Erreur lors du lancement de la tâche automatique");
-        }
-        return intval($success);
-     }
+      public static function cronConfig($task = NULL) {
+         global $DB;
+         $autotsk = new PluginautotasksConfig();
+         $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, id, tickets_id, date_mod, state FROM glpi_tickettasks WHERE date_mod BETWEEN DATE(NOW()) - interval 1 day AND DATE(NOW()) + interval 1 day AND state = 2";
+         $success = $autotsk->starttask($sql);
+         if ($success) {
+            $autotsk->logs("La tâche a été effectuée avec succès");
+         } else {
+            $autotsk->logs("Erreur lors du lancement de la tâche automatique");
+         }
+         // $success = $autotsk->delTaskLogs($DB); TESTING
+         return intval($success);
+      }
 }

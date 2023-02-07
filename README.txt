@@ -46,6 +46,6 @@ N'utilisez le fichier web.php qu'en cas de tests !
 
 TO DO
 
-Documentation des nouvelles fonctions
+Documentation des nouvelles fonctions 
 
-Suppression automatique des logs vieux de 6 mois
+Suppression automatique des logs vieux de 6 mois - TESTING
