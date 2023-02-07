@@ -1,24 +1,13 @@
 <?php
-global $DB, $CFG_GLPI;
+include("phpheader.php");
 
-include("../../../../inc/includes.php");
-
-if (!defined('GLPI_ROOT')) {
-   echo "Vous n'avez pas l'authorisation d'accéder à cette page";
-} 
-Session::checkRight("config", UPDATE); 
-$style = '';
-if (isset($_GET['hardreload']) && !isset($_GET['verif'])) {
-   $style = "color:red;";
-}
-
-Plugin::load('autotasks');
-
-require('controller/controller.php');
 if (!isset($_GET['action'])) {
     $_GET['action'] = '';
 }
-
+if (!(new controller)->getConf()) {
+    (new controller)->unauthorized();
+    die();
+}
 switch ($_GET['action']) {
     case "demande":
         (new controller)->demande();

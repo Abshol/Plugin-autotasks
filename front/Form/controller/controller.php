@@ -1,12 +1,4 @@
 <?php
-
-require('vues/demande.form.php');
-require('vues/incident.form.php');
-require('vues/index.form.php');
-
-require('models/demande.class.php');
-require('models/incident.class.php');
-
 class controller {
     public function index() {
         (new index)->accueil();
@@ -22,6 +14,9 @@ class controller {
         (new incidentform)->index($mess);
     }
 
+    public function unauthorized() {
+        (new index)->unauthorized();
+    }
     /**
      * Insertion du ticket dans la base de données uniquement si la descrption est écrite et que la case de téléphone est cochée
      * 
@@ -63,6 +58,10 @@ class controller {
                 $this->incident("<span class='error'>Une erreur est survenue lors de la création du ticket</span>");
              }
         }
+    }
+
+    public function getConf() {
+        return (new database)->getConf();
     }
 }
 ?>

@@ -1,3 +1,5 @@
-Refonte du CSS de la page config.form.php basée sur le formlulaire de création de tickets du plug-in
+Début de l'application
 
-Ajout d'options de debug permettant d'activer / désactiver plus facilement le formulaire de création de tickets et la page web.php
+Refonte du code de la page de configurations
+
+Ajout d'une fonctionnalité permettant de modifier le nombre de fois qu'il est possible de faire un "hard-reset" par jours

@@ -10,6 +10,7 @@ include("../inc/config.class.php");
 if (!defined('GLPI_ROOT')) {
    echo __("Vous n'avez pas l'authorisation d'accéder à cette page", 'autotasks');
 } 
+
 Session::checkRight("config", UPDATE);
 
 Plugin::load('autotasks');
@@ -33,22 +34,101 @@ if (getConf($autotsk, 'form')) {
 } else {
    $form = "<input type='submit' class='inputAuto' name='formActivate' value='Activer le formulaire de débug'>";
 }
-
+if (isset($_GET['envoyer'])) {
+   if (isset($_GET['numbHardR'])) {
+      if (!$autotsk->hardreset(Session::getLoginUserID(), $DB)) {
+         $nombre = intval($_GET['numbHardR']);
+         $nombre *= $nombre;
+         $nombre = sqrt($nombre);
+         if ($autotsk->changeHardR($DB, $nombre)) {
+            header('Location: ./config.form.php');
+         } else {
+            header('Location: ./config.form.php?mess=HRChangeErr');
+         }
+      } else {
+         header('Location: ./config.form.php?mess=HRChangeLimit');
+      }
+   }
+}
 if (isset($_GET['webActivate'])) {
-   $autotsk->activateConf('webphp');
+   if (!$autotsk->activateConf('webphp')) {
+      header('Location: ./config.form.php?mess=ErrActDeact');
+   }
    header('Location: ./config.form.php');
 }
 if (isset($_GET['formActivate'])) {
-   $autotsk->activateConf('form');
+   if (!$autotsk->activateConf('form')) {
+      header('Location: ./config.form.php?mess=ErrActDeact');
+   }
    header('Location: ./config.form.php');
 }
 if (isset($_GET['webDeactivate'])) {
-   $autotsk->deactivateConf('webphp');
+   if (!$autotsk->deactivateConf('webphp')) {
+      header('Location: ./config.form.php?mess=ErrActDeact');
+   }
    header('Location: ./config.form.php');
 }
 if (isset($_GET['formDeactivate'])) {
-   $autotsk->deactivateConf('form');
+   if (!$autotsk->deactivateConf('form')) {
+      header('Location: ./config.form.php?mess=ErrActDeact');
+   }
    header('Location: ./config.form.php');
+}
+if (!isset($_GET['mess'])) {
+   $_GET['mess'] = '';
+}
+switch($_GET['mess']) {
+   case "ErrActDeact":
+      $mess = "<br><br><span class='error'>Erreur : Une erreur est survenue lors du changement de configuration</span>"; 
+      break;
+   case "resetSucc":
+      $mess = "<br><br><span class='message'>L'action a bien été effectuée</span>";
+      break;
+   case "resetErr":
+      $mess = "<br><br><span class='error'>Erreur : Une erreur est survenue lors de l'action</span>";
+      break;
+   case "HRLimit":
+      $mess = "<br><br><span class='error'>Erreur : Vous avez atteint la limite journalière de 'hard-reset'</span>";
+      break;
+   case "HRCase":
+      $mess = "<br><br><span class='error'>Veuillez cocher la case</span>";
+      break;
+   case "HRChangeErr":
+      $mess = "<br><br><span class='error'>Erreur : Une erreur est survenue lors du changement de quotas</span>";
+      break;
+   case "HRChangeLimit":
+      $mess = "<br><br><span class='error'>Erreur : Impossible de changer de quotas si votre quotas actuel est déjà atteint</span>";
+      break;
+   default:
+      $mess = "";
+      break;
+}
+if (isset($_GET['reset'])) {
+   $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, id, tickets_id, date_mod, state FROM glpi_tickettasks WHERE date_mod BETWEEN DATE(NOW()) - interval 1 day AND DATE(NOW()) + interval 1 day AND state = 2";
+   $reussite = $autotsk->starttask($sql);
+   if ($autotsk->tasklog($reussite, $DB)) {
+            header('Location: ./config.form.php?mess=resetSucc');
+   } else {
+      header('Location: ./config.form.php?mess=resetErr');
+   }
+}
+
+if (isset($_GET['hardreset'])) {
+   if (isset($_GET['verif'])) {
+      if ($autotsk->hardreset(Session::getLoginUserID(), $DB)) {
+         header('Location: ./config.form.php?mess=HRLimit');
+      } else {
+         $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, id, tickets_id, date_mod, state FROM glpi_tickettasks WHERE state = 2";
+         $reussite = $autotsk->starttask($sql);
+         if ($autotsk->tasklog($reussite, $DB, true)) {
+                  header('Location: ./config.form.php?mess=resetSucc');
+         } else {
+            header('Location: ./config.form.php?mess=resetErr');
+         }
+      }
+   } else {
+      header('Location: ./config.form.php?mess=HRCase');
+   }
 }
 
 Html::header("AutoTasks Config", $_SERVER['PHP_SELF'], "config", "plugins");
@@ -66,12 +146,17 @@ echo __("<link href='Form/css/style.css' rel='stylesheet'>
                   $web
                   $form
                </div>
+               <div class='form-object config'>
+                  <label for='numbHardR'>Nombre de 'hard-reset' authorisés par comptes:</label>
+                  <input type='number' name='numbHardR' min='0' id='numbHardR' placeholder='Defaut=1 - Actuel=".$autotsk->getNumbHardR($DB)."'>
+                  <input type='submit' class='inputAuto subb' name='envoyer' value='Enregistrer les modifications'>
+               </div>
                <div class='dropdown-menu config'>
                   <div class='menu-btn config'>Débug</div>
                   <div class='drop-container config'>
                      <input type='submit' class='inputAuto config' name='reset' value='Recharger les dernières 24h'>
                      <div class='form-object'>
-                        <input type='submit' class='inputAuto config' name='hardreset' value='Recharger TOUTE la base de données'>
+                        <input type='submit' class='inputAuto config' name='hardreset' value='Recharger TOUTE la base de données' style='width:110%'>
                         <span class='checkbox'><input type='checkbox' name='verif' id='verif' value='true'><label for='verif'>Confirmez votre action</label></span>
                      </div>
                   </div>
@@ -80,38 +165,14 @@ echo __("<link href='Form/css/style.css' rel='stylesheet'>
          </form><br>
                $webButton
                $formButton
-      </div>", "autotasks");
-
-      
-if (isset($_GET['reset'])) {
-   $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, id, tickets_id, date_mod, state FROM glpi_tickettasks WHERE date_mod BETWEEN DATE(NOW()) - interval 1 day AND DATE(NOW()) + interval 1 day AND state = 2";
-   $reussite = $autotsk->starttask($sql);
-   if ($autotsk->tasklog($reussite, $DB)) {
-      echo __("<br><br><span class='message'>L'action a été réalisée avec succès</span>", 'autotasks');
-   } else {
-      echo __("<br><br><span class='error'>Une erreur s'est produite lors du rechargement de la base</span>", 'autotasks');
-   }
-}
-
-if (isset($_GET['hardreset'])&& isset($_GET['verif'])) {
-   if ($_GET['verif'] == 'true') {
-      if ($autotsk->hardreset(Session::getLoginUserID(), $DB)) {
-         echo __("<br><br><span class='error'>Erreur: Vous avez déjà effectué cette action dans la journée</span>", 'autotasks');
-      } else {
-         $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, id, tickets_id, date_mod, state FROM glpi_tickettasks WHERE state = 2";
-         $reussite = $autotsk->starttask($sql);
-         if ($autotsk->tasklog($reussite, $DB, true)) {
-            echo __("<br><br><span class='message'>L'action a été réalisée avec succès</span>", 'autotasks');
-         } else {
-            echo __("<br><br><span class='error'>Une erreur s'est produite lors du rechargement de la base</span>", 'autotasks');
-         }
-      }
-   } else {
-     echo __("<br><br><span class='error'>Merci de bien vouloir cocher la case</span>", 'autotasks');  
-   }
-}
-echo __("</div></div><script src='Form/javascript/script.js'></script>", 'autotasks');
+      </div>
+      $mess
+</div></div><script src='Form/javascript/script.js'></script>", 'autotasks');
 Html::footer();
+
+
+
+
 
 function getConf($autotsk, $name) {
    if ($autotsk->getConf($name)) {

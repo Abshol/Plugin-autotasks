@@ -13,10 +13,12 @@ Enfin il s'occupera de l'escalation des tâches selon plusieurs cas:
 Le fichier config.form.php est une page web permettant de forcer la tâche à s'activer sans passer par le cron.
 Il y est aussi possible de faire parcourir le plug-in dans toute la base de données (et pas seulement dans les données modifiées dans les dernières 24h),
 cette dernière action n'est recommandée que lors de l'installation du plug-in ou en cas d'urgence car elle peut prendre du temps dans les grosses bases de données. (Il est par ailleurs impossible de le faire plus d'une fois par jour)
-Il y est possible d'activer deux pages web:
 
-La page web.php ayant la même utilitée que le fichier config.form.php, mais en étant complétement à part de glpi, permettant de vérifier si les erreurs que vous avez viennent de votre glpi, ou d'ailleurs'.
-Un formulaire de création de tickets
+Il y est possible de faire plusieurs choses:
+
+Activer la page web.php ayant la même utilitée que le fichier config.form.php, mais en étant complétement à part de glpi, permettant de vérifier si les erreurs que vous avez viennent de votre glpi, ou d'ailleurs'.
+Activer un formulaire de création de tickets
+Modifier le nombre d'action sur toute la base de données (appelée "hard-reset") possible par jours
 
 ------------------------------
 

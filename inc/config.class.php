@@ -182,7 +182,7 @@ class PluginautotasksConfig extends CommonDBTM
    }
    
    /**
-    * Cette fonction permet de savoir si l'utilisateur connecté a déjà effectué un "hardreset" ou non, si oui, celui-ci ne se fera pas
+    * Cette fonction permet de savoir si l'utilisateur connecté a dépassé la limite de "hardreset" ou non, si oui, renvoie false
     *
     * @param int $userid Id de l'utilisateur connecté
     * @param mysqli $DB Base de données
@@ -194,7 +194,7 @@ class PluginautotasksConfig extends CommonDBTM
       $sql = "SELECT COUNT(*) AS user FROM glpi_plugin_autotaskslogs WHERE user = $userid AND `date` = DATE(NOW()) AND hardreset = 1;";
       if ($result = $DB->query($sql)) {
          $row = $DB->fetch_assoc($result);
-         if ($row['user'] > 0) {
+         if ($row['user'] > $this->getNumbHardR($DB)) {
             return true;
          } else {
             return false;
@@ -203,6 +203,32 @@ class PluginautotasksConfig extends CommonDBTM
          $this->logs("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
          return false;
       }
+   }
+
+   function getNumbHardR($DB) {
+      $sql = "SELECT number FROM glpi_plugin_autotasksconf WHERE name = 'maxHardR'";
+      if ($result = $DB->query($sql)) {
+         $row = $DB->fetch_assoc($result);
+         return $row['number'];
+      } else {
+         die("Erreur lors de la recherche des configurations");
+      }
+
+   }
+
+   function changeHardR($DB, $nombre) {
+      $update = $DB->buildUpdate(
+         'glpi_plugin_autotasksconf', 
+         ['number' => new Queryparam()], 
+         ['name' => 'maxHardR']
+      );
+      $stmt=$DB->prepare($update);
+      $stmt->bind_param('i', $nombre);
+
+      if ($stmt->execute()) {
+         return true;
+      }
+      return false;
    }
 
    /**
