@@ -41,3 +41,11 @@ N'oubliez pas de faire un "composer install" pour installer les librairies requi
 Il est nécessaire que votre utilisateur web ait les droits d'accès sur le fichier tools/history.log afin de remplir les logs et de pouvoir lancer manuellement le plug-in
 
 N'utilisez le fichier web.php qu'en cas de tests !
+
+------------------------------
+
+TO DO
+
+Documentation des nouvelles fonctions
+
+Suppression automatique des logs vieux de 6 mois
