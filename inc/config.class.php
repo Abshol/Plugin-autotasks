@@ -272,6 +272,9 @@ class PluginautotasksConfig extends CommonDBTM
       return false;
    }
 
+   function delTaskLogs($DB) {
+      
+   }
    /**
     * Recherches si la configuration passée en paramètre est activée (True) ou non (False)
     *
