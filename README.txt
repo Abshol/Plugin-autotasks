@@ -41,6 +41,12 @@ Les tables servant à logger auront leurs données automatiquement supprimées s
 
 ------------------------------
 
+TÂCHE AUTOMATIQUE
+
+La tâche automatique se nomme "AutoTasks", elle effectue une recharge de la base sur les dernières 24 heures toutes les 5 minutes
+
+------------------------------
+
 INSTALLATION
 
 N'oubliez pas de faire un "composer install" pour installer les librairies requises

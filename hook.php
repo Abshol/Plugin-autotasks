@@ -8,7 +8,7 @@ function plugin_autotasks_install() {
     global $DB;
     //instanciate migration with version
     $migration = new Migration(100);
-    CronTask::register(PluginAutotasksAuto::class, 'Config', 300, [
+    CronTask::register(PluginAutotasksAuto::class, 'AutoTasks', 300, [
         'mode' => CronTask::MODE_EXTERNAL,
         'comment' => __('Autotasks - Permet de lancer le plug-in', 'autotasks')
     ]);

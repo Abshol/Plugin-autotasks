@@ -12,9 +12,9 @@ class PluginautotasksAuto extends CommonDBTM
      */
     static function cronInfo($name) {
         switch ($name) {
-           case 'Autotasks-CronTask':
+           case 'Autotasks':
               return array(
-                 'description' => __('Finds in the database all tasks that are set to 0 when the one before is set to 2, and sets it to 1'));
+                 'description' => __('Récupères toutes les tâches finies pour automatiser l\'escalade des tickets'));
         }
         return array();
      }
@@ -26,17 +26,16 @@ class PluginautotasksAuto extends CommonDBTM
       *
       * @return integer either 0 or 1
       */
-      public static function cronConfig($task = NULL) {
+      public static function cronAutoTasks($task = NULL) {
          global $DB;
-         $autotsk = new PluginautotasksConfig();
          $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, id, tickets_id, date_mod, state FROM glpi_tickettasks WHERE date_mod BETWEEN DATE(NOW()) - interval 1 day AND DATE(NOW()) + interval 1 day AND state = 2";
-         $success = $autotsk->starttask($sql);
+         $success = (new PluginautotasksConfig)->starttask($sql);
          if ($success) {
-            $autotsk->logs("La tâche a été effectuée avec succès");
+            (new PluginautotasksConfig)->logs("La tâche a été effectuée avec succès");
          } else {
-            $autotsk->logs("Erreur lors du lancement de la tâche automatique");
+            (new PluginautotasksConfig)->logs("Erreur lors du lancement de la tâche automatique");
          }
-         $success = $autotsk->delTaskLogs($DB);
+         $success = (new PluginautotasksConfig)->delTaskLogs($DB);
          return intval($success);
       }
 }

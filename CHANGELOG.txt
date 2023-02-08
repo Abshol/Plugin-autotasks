@@ -1,5 +1,3 @@
 Améliorations mineures du code
 
-Changement de la structure des fichiers du front/
-
-Teste d'un ajout d'un lien vers le formulaire dans le menu de glpi (sans avoir à passer par la page de configuration du plug-in)
+Changement du nom de la tâche automatique de "Config" à "AutoTasks"
