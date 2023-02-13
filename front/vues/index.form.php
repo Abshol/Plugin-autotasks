@@ -20,7 +20,7 @@ class index
    public function unauthorized() {
       include('header.php');
       echo "<div class='container'>
-      <div class='container-header'><a href='../../../../'><box-icon name='left-arrow-alt' color='#ffffff'></box-icon></a><span class='header-title'>Merci d'activer le formulaire pour accéder à cette page</span></div>
+      <div class='container-header'><a href='../../../'><box-icon name='left-arrow-alt' color='#ffffff'></box-icon></a><span class='header-title'>Merci d'activer le formulaire pour accéder à cette page</span></div>
       </div>";
       include('footer.php');
    }

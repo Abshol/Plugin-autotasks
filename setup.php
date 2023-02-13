@@ -1,5 +1,5 @@
 <?php
-define('autotasks_VERSION', '2.1.3');
+define('autotasks_VERSION', '2.2.0');
 global $CFG_GLPI;
 /**
  * Init the hooks of the plugins - Needed
@@ -12,6 +12,7 @@ function plugin_init_autotasks() {
    $PLUGIN_HOOKS['config_page']['autotasks'] = 'front/config.form.php';
    $PLUGIN_HOOKS['add_javascript']['autotasks'] = 'front/javascript/script.js';
    $PLUGIN_HOOKS['add_css']['autotasks'] = 'front/css/style.css';
+   
    $PLUGIN_HOOKS['menu_entry']['autotasks'] = 'front/Form/';
    $PLUGIN_HOOKS['submenu_entry']['autotasks']['options'] = [
       'config'       => ['title'  => __('Autotasks Form'),

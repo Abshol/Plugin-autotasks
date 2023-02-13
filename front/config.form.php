@@ -55,7 +55,7 @@ if (isset($_GET['envoyer'])) {
 }
 if (isset($_GET['webActivate'])) {
    if ((new PluginautotasksConfig)->confLog($DB, Session::getLoginUserID(), 'webphp', 'Activation de web.php')) {
-      if (!(new PluginautotasksConfig)->activateConf('webphp')) {
+      if (!(new PluginautotasksConfig)->activateConf('webphp', true)) {
          header('Location: ./config.form.php?mess=ErrActDeact');
       }
    } else {
@@ -65,7 +65,7 @@ if (isset($_GET['webActivate'])) {
 }
 if (isset($_GET['formActivate'])) {
    if ((new PluginautotasksConfig)->confLog($DB, Session::getLoginUserID(), 'form', 'Activation du formulaire')) {
-      if (!(new PluginautotasksConfig)->activateConf('form')) {
+      if (!(new PluginautotasksConfig)->activateConf('form', true)) {
          header('Location: ./config.form.php?mess=ErrActDeact');
       }
    } else {
@@ -75,7 +75,7 @@ if (isset($_GET['formActivate'])) {
 }
 if (isset($_GET['webDeactivate'])) {
    if ((new PluginautotasksConfig)->confLog($DB, Session::getLoginUserID(), 'webphp', 'Désactivation de web.php')) {
-      if (!(new PluginautotasksConfig)->deactivateConf('webphp')) {
+      if (!(new PluginautotasksConfig)->activateConf('webphp', false)) {
          header('Location: ./config.form.php?mess=ErrActDeact');
       }
    } else {
@@ -85,7 +85,7 @@ if (isset($_GET['webDeactivate'])) {
 }
 if (isset($_GET['formDeactivate'])) {
    if ((new PluginautotasksConfig)->confLog($DB, Session::getLoginUserID(), 'form', 'Désactivation du formulaire')) {
-      if (!(new PluginautotasksConfig)->deactivateConf('form')) {
+      if (!(new PluginautotasksConfig)->activateConf('form', false)) {
          header('Location: ./config.form.php?mess=ErrActDeact');
       }
    } else {

@@ -1,3 +1,5 @@
 Améliorations mineures du code
 
-Changement du nom de la tâche automatique de "Config" à "AutoTasks"
+Correction d'un bug qui empêchait la suppression de l'affiliation d'un groupe d'un ticket s'il finissait sa tâche avant le premier (alors qu'il est après dans l'ordre des tâches)
+
+Changement de la syntaxe des requêtes sql pour convenir à la norme glpi

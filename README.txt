@@ -59,4 +59,4 @@ N'utilisez le fichier web.php qu'en cas de tests !
 
 TO DO
 
-Lien pour accéder aux formulaires sans passer par la page de configuration du plug-in
+Changement de la syntaxe des requêtes sql DONE

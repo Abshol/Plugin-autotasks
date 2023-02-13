@@ -16,23 +16,17 @@ class PluginautotasksConfig extends CommonDBTM
    public function starttask ($sql) {
       global $DB, $CFG_GLPI;
       $mess = false;
-      if ($result = $DB->query($sql)) {
-         if ($DB->numrows($result) == 1) {
-            if ($row = $DB->fetch_assoc($result)) {
-               return $this->task($row, $DB);
-            } else {
-               $this->logs("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
-            }
-         } else if ($DB->numrows($result) > 1){
-            while ($row = $DB->fetch_assoc($result)) {
-               switch ($mess = $this->task($row, $DB)) {
-                  case true:
-                     $break = false;
-                     break;
-                  case false:
-                     $break = true;
-                     break;
-               }
+      foreach ($result = $DB->request($sql) as $row) {
+         if ($result->count() == 1) {
+            $mess = $this->task($row, $DB);
+         } else if ($result->count() > 1){
+            switch ($mess = $this->task($row, $DB)) {
+               case true:
+                  $break = false;
+                  break;
+               case false:
+                  $break = true;
+                  break;
                if ($break) {
                   $this->logs("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
                   break;
@@ -40,15 +34,16 @@ class PluginautotasksConfig extends CommonDBTM
             }
          } else {
             $this->logs("Aucune action possible dans la base de données");
-            return true;
+            $mess = true;
          }
-      } else {
-         $this->logs("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
       }
+      if (!$mess) {
+      $this->logs("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
+   }
       return $mess;
    }
 
-   /**
+   /** 
     * Lancement de la tâche
     *
     * @param mixed $row Lignes récupérées par la requête précédente
@@ -59,33 +54,27 @@ class PluginautotasksConfig extends CommonDBTM
    function task ($row, $DB) {
       $sql = "SELECT (ROW_NUMBER() OVER (ORDER BY id)) AS `row`, `id`, `state`, tickets_id, groups_id_tech FROM glpi_tickettasks WHERE tickets_id = ".$row['tickets_id'].";";
       $success = true;
-      if ($resultset = $DB->query($sql)) {
+      foreach ($resultset = $DB->request($sql) as $rows) {
          $before = false; //Cette variable sert à déterminer si le state de la tâche précédente est à 2 (true) ou non (false)
          $break = false;
-         while ($rows = $DB->fetch_assoc($resultset)) {
-            if ($rows['state'] != "2") {
-               if ($before = true) { //Si la précédente tâche est passée à 2, on passe celle-ci à 1
-                  if ($this->groupVerif($rows, $DB)) {
-                     $sql2 = "UPDATE glpi_tickettasks SET state = 1 WHERE id = " . $rows['id'] . ";";
-                     if ($DB->query($sql2)) {
-                        $success = $this->groupChange($rows, $DB);
-                     } else {
-                        $success = false;
-                     }
+         if ($rows['state'] != "2") {
+            if ($before = true) { //Si la précédente tâche est passée à 2, on passe celle-ci à 1
+               if ($this->groupVerif($rows, $DB)) {
+                  if ($DB->update('glpi_tickettasks', ['state'=>1], ['id'=>$rows['id']])) {
+                     $success = $this->groupChange($rows, $DB);
                   } else {
-                     $this->groupDelete($rows, $DB, $lastGroupId);
+                     $success = false;
                   }
-                  $break = true;
+               } else {
+                  $this->groupDelete($rows, $DB);
                }
-               $before = false;
-            } else {
-               $lastGroupId = $rows['groups_id_tech'];
-               $before = true;
+               $break = true;
             }
-            if ($break) {break;}
+            $before = false;
+         } else {
+            $before = true;
          }
-      } else {
-         $this->logs("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
+         if ($break) {break;}
       }
       if (!$success) {
          $this->logs("Une erreur est survenue lors du rechargement de la base: ".$DB->error);
@@ -105,12 +94,16 @@ class PluginautotasksConfig extends CommonDBTM
     * @return boolean
     */
    function groupVerif($row, $DB) {
-      $sql = "SELECT COUNT(*) as `nombre` FROM glpi_groups_tickets WHERE tickets_id = " . $row['tickets_id'];
-      $resultset = $DB->query($sql);
-      $rows = $DB->fetch_assoc($resultset);
-      if ($rows['nombre'] > 1) {
+      // $sql = "SELECT COUNT(*) as `nombre` FROM glpi_groups_tickets WHERE tickets_id = " . $row['tickets_id'];
+      // $resultset = $DB->query($sql);
+      $resultset = $DB->request([
+         'FROM' => 'glpi_groups_tickets',
+         'WHERE' => ['tickets_id'=>$row['tickets_id']]
+      ]);
+      var_dump($resultset->count());
+      if ($resultset->count() > 1) {
          return false;
-      } else if ($rows['nombre'] == 1) {
+      } else if ($resultset->count() == 1) {
          return true;
       } else {
          return $this->groupCreate($row, $DB);
@@ -126,15 +119,36 @@ class PluginautotasksConfig extends CommonDBTM
     *
     * @return boolean
     */
-   function groupDelete($row, $DB, $lastGroupId) {
-      $sql = "DELETE FROM glpi_groups_tickets WHERE groups_id = $lastGroupId AND tickets_id = ".$row['tickets_id'];
-      if ($DB->query($sql)) {
-         $this->logs("Suppression de l'attribution du groupe $lastGroupId au ticket ".$row['tickets_id']." réussie");
-         return true;
-      } else {
-         $this->logs("Echec de la suppression de l'attribution du groupe $lastGroupId au ticket ".$row['tickets_id']);
-         return false;
+   function groupDelete($row, $DB) {
+      $req = $DB->request([
+         'SELECT' => 'groups_id_tech',
+         'FROM' => 'glpi_tickettasks',
+         'WHERE' => [
+            'tickets_id'=>$row['tickets_id'],
+            'state'=>2]
+         ]);
+      foreach ($req as $roz) {
+         $request = $DB->request([
+            'FROM' => 'glpi_groups_tickets',
+            'WHERE' => [
+               'tickets_id'=>$row['tickets_id'],
+               'groups_id'=>$roz['groups_id_tech'],
+               'type'=>'2'
+            ]
+            ]);
+            if ($request->count()) {
+               $sql = "DELETE FROM glpi_groups_tickets WHERE groups_id = ".$roz['groups_id_tech']." AND tickets_id = ".$row['tickets_id'];
+               if ($DB->query($sql)) {
+                  $this->logs("Suppression de l'attribution du groupe ".$roz['groups_id_tech']." au ticket ".$row['tickets_id']." réussie");
+                  return true;
+               } else {
+                  $this->logs("Echec de la suppression de l'attribution du groupe ".$roz['groups_id_tech']." au ticket ".$row['tickets_id']);
+                  return false;
+               }
+            }
+
       }
+      
    }
 
    /**
@@ -145,12 +159,14 @@ class PluginautotasksConfig extends CommonDBTM
     *
     * @return boolean Selon si cela s'est bien déroulé
     */
-   function groupChange($row, $DB) {
-      // Vérification
-      // On change l'affiliation de ce ticket à ce groupe
-      $sql = "UPDATE glpi_groups_tickets SET groups_id = " . $row['groups_id_tech'] . " WHERE tickets_id = " . $row['tickets_id'] . ";";
-      // returns true or false depending on success
-      if ($DB->query($sql)) {
+   function groupChange($row, $DB) {      
+      if (
+         $DB->update('glpi_groups_tickets', [
+            'groups_id'=>$row['groups_id_tech']
+         ], [
+            'tickets_id'=>$row['tickets_id']
+         ]
+      )) {
          $this->logs("Attribution du groupe " . $row['groups_id_tech'] . " au ticket " . $row['tickets_id'] . " réussie");
          return true;
       } else {
@@ -168,11 +184,13 @@ class PluginautotasksConfig extends CommonDBTM
     * @return boolean Selon si cela s'est bien déroulé
     */
     function groupCreate($row, $DB) {
-      // Vérification
-      // On change l'affiliation de ce ticket à ce groupe
-      $sql = "INSERT INTO glpi_groups_tickets (tickets_id, groups_id, `type`) VALUES (" . $row['tickets_id'] . ", " . $row['groups_id_tech'] . ",2)";
-      // returns true or false depending on success
-      if ($DB->query($sql)) {
+      if ($DB->insert(
+         'glpi_groups_tickets', [
+            'tickets_id' => $row['tickets_id'],
+            'groups_id' => $row['groups_id_tech'],
+            'type' => 2
+         ]
+      )) {
          $this->logs("Attribution du groupe " . $row['groups_id_tech'] . " au ticket " . $row['tickets_id'] . " réussie");
          return true;
       } else {
@@ -191,10 +209,15 @@ class PluginautotasksConfig extends CommonDBTM
     * 
     */
    function hardreset($userid, $DB) {
-      $sql = "SELECT COUNT(*) AS user FROM glpi_plugin_autotaskslogs WHERE user = $userid AND `date` = DATE(NOW()) AND hardreset = 1;";
-      if ($result = $DB->query($sql)) {
-         $row = $DB->fetch_assoc($result);
-         if ($row['user'] > $this->getNumbHardR($DB)) {
+      if ($result = $result = $DB->request([
+         'FROM' => 'glpi_plugin_autotaskslogs',
+         'WHERE' => [
+            'user' => $userid,
+            'date' => new QueryExpression('DATE(NOW())'),
+            'hardreset' => 1
+         ]
+      ])) {
+         if ($result->count() > $this->getNumbHardR($DB)) {
             return true;
          } else {
             return false;
@@ -213,9 +236,13 @@ class PluginautotasksConfig extends CommonDBTM
     * @return int Nombre de fois possible en une journée
     */
    function getNumbHardR($DB) {
-      $sql = "SELECT number FROM glpi_plugin_autotasksconf WHERE name = 'maxHardR'";
-      if ($result = $DB->query($sql)) {
-         $row = $DB->fetch_assoc($result);
+      // $sql = "SELECT number FROM glpi_plugin_autotasksconf WHERE name = 'maxHardR'";
+      if ($result = $DB->request([
+         'SELECT' => 'number',
+         'FROM' => 'glpi_plugin_autotasksconf',
+         'WHERE' => ['name' => 'maxHardR']
+      ])) {
+         $row = $result->next();
          return $row['number'];
       } else {
          die("Erreur lors de la recherche des configurations");
@@ -255,12 +282,19 @@ class PluginautotasksConfig extends CommonDBTM
     * @return int Nombre de fois que l'utilisateur a effectué l'action
     */
    function getNumbHardRUser($userid, $DB) {
-      $sql = "SELECT COUNT(*) AS user FROM glpi_plugin_autotaskslogs WHERE user = $userid AND `date` = DATE(NOW()) AND hardreset = 1;";
-      if ($result = $DB->query($sql)) {
-         $row = $DB->fetch_assoc($result);
-         return $row['user'];
+      if ($result = $DB->request([
+         'FROM' => 'glpi_plugin_autotaskslogs',
+         'WHERE' => [
+            'user' => $userid,
+            'date' => new QueryExpression('DATE(NOW())'),
+            'hardreset' => 1
+         ]
+      ])) {
+         $row = $result->count();
+         return $row;
       }
    }
+
    /**
     * Permet de logs les erreurs survenues lors des requêtes
     * 
@@ -287,8 +321,14 @@ class PluginautotasksConfig extends CommonDBTM
     * 
     */
    function tasklog($success, $DB, $hardreset = false) {
-      $sql = "INSERT INTO glpi_plugin_autotaskslogs (`user`, `hardreset`, `date`,success) VALUES (" . Session::getLoginUserID() . ", " . ($hardreset?"TRUE":"FALSE") . ", DATE(NOW()), " . ($success?"TRUE":"FALSE") . ");";
-      $DB->query($sql);
+      $DB->insert(
+         'glpi_plugin_autotaskslogs', [
+            'user' => Session::getLoginUserID(),
+            'hardreset' => ($hardreset?1:0),
+            'date' => new QueryExpression('DATE(NOW())'),
+            'success' => ($success?1:0)
+         ]
+      );
       if ($success) {
          return true;
       }
@@ -303,10 +343,15 @@ class PluginautotasksConfig extends CommonDBTM
     * @return boolean
     */
    function delTaskLogs($DB) {
-      $sql = "DELETE FROM glpi_plugin_autotaskslogs WHERE date <= DATE_ADD(DATE(NOW()),INTERVAL -6 MONTH);";
-      if ($DB->query($sql)) {
+      if ($DB->delete(
+            'glpi_plugin_autotaskslogs', [
+               'date' => ['<=', new QueryExpression('DATE_ADD(DATE(NOW()), INTERVAL -6 MONTH)')]
+            ])) {
          $sql = "DELETE FROM glpi_plugin_autotaskslogs_changeconf WHERE date <= DATE_ADD(DATE(NOW()),INTERVAL -6 MONTH);";
-         return $DB->query($sql);
+         return $DB->delete(
+            'glpi_plugin_autotaskslogs_changeconf', [
+               'date' => ['<=', new QueryExpression('DATE_ADD(DATE(NOW()), INTERVAL -6 MONTH)')]
+            ]);
       }
       return false;
    }
@@ -344,8 +389,11 @@ class PluginautotasksConfig extends CommonDBTM
    function getConf($recherche) {
       global $DB;
       $sql = "SELECT * FROM glpi_plugin_autotasksconf WHERE name = '$recherche'";
-      if ($result = $DB->query($sql)) {
-         $row = $DB->fetch_assoc($result);
+      if ($result = $DB->request([
+         'FROM' => 'glpi_plugin_autotasksconf',
+         'WHERE' => ['name' => $recherche]
+      ])) {
+         $row = $result->next();
          if ($row['activated'] == 0) {
             return false;
          } else {
@@ -360,29 +408,17 @@ class PluginautotasksConfig extends CommonDBTM
     * Active une configuration dont le nom est passé en paramètre
     *
     * @param string $name Nom de la configuration à activer
+    * @param bool $activate Si la configuration doit être activée (true) ou non (false)
     *
     * @return bool Si l'action s'est bien déroulée ou non
     */
-   function activateConf($name) {
+   function activateConf($name, $activate) {
       global $DB;
-      $sql = "UPDATE `glpi_plugin_autotasksconf` SET `activated`= 1 WHERE name = '$name'";
-      if ($DB->query($sql)) {
-         return true;
-      }
-      return false;
-   }
-
-   /**
-    * Désactive une configuration dont le nom est passé en paramètre
-    *
-    * @param string $name Nom de la configuration à désactiver
-    *
-    * @return bool Si l'action s'est bien déroulée ou non
-    */
-   function deactivateConf($name) {
-      global $DB;
-      $sql = "UPDATE `glpi_plugin_autotasksconf` SET `activated`= 0 WHERE name = '$name'";
-      if ($DB->query($sql)) {
+      if ($DB->update('glpi_plugin_autotasksconf', [
+            'activated' => ($activate?1:0)
+         ], [
+            'name' => $name
+         ])) {
          return true;
       }
       return false;
