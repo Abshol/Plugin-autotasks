@@ -8,7 +8,7 @@ class demandeclass {
      * 
      * @return bool true si ça s'est bien passé, false sinon
      */
-    public function materiel($post, $DB) {
+    public function materiel($post, $DB, $ini) {
         $insert = $DB->buildInsert(
             'glpi_tickets',
             [
@@ -24,7 +24,7 @@ class demandeclass {
         if ($stmt->execute()) {
             $id = $DB->insertId();
             if ($post['tel'] === 'Oui') {
-                $sql = "INSERT INTO glpi_tickettasks (`tickets_id`, `groups_id_tech`, `date`, `content`) VALUES ($id, 5, NOW(), 'Acheter Téléphone')";
+                $sql = "INSERT INTO glpi_tickettasks (`tickets_id`, `groups_id_tech`, `date`, `content`) VALUES ($id, ".$ini['group_demande_tel'].", NOW(), 'Acheter Téléphone')";
                 if ($DB->query($sql)) {
                     $sql = "INSERT INTO `glpi_tickets_users` (`tickets_id`, `users_id`, `type`) VALUES ($id, ".Session::getLoginUserID().", 1)";
                     if ($DB->query($sql)) {
