@@ -11,7 +11,7 @@ class controller {
     public function materielSub($post, $DB) {
         if(isset($post['desc']) && isset($post['tel'])) {
             if ($post['tel'] == 'Oui'){
-                if ((new demandeclass)->materiel($post, $DB)) {
+                if ((new demandeclass)->materiel($post, $DB, parse_ini_file("config.ini"))) {
                     header('Location: ?action=demandeSucc');
                 } else {
                     header('Location: ?action=demandeErr');
@@ -35,7 +35,7 @@ class controller {
      */
     public function incidentSub($post, $DB) {
         if (isset($post['desc'])) {
-            if ((new incidentclass)->incident($post, $DB)) {
+            if ((new incidentclass)->incident($post, $DB, parse_ini_file("config.ini"))) {
                 header('Location: ?action=incidentSucc');
             } else {
                 header('Location: ?action=incidentErr');

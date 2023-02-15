@@ -20,6 +20,8 @@ Activer la page web.php ayant la même utilitée que le fichier config.form.php,
 Activer un formulaire de création de tickets
 Modifier le nombre d'action sur toute la base de données (appelée "hard-reset") possible par jours
 
+Vous pouvez changer les groupes attribués aux tickets crées avec le formulaire du plug-in via le fichier config.ini dans le dossier front/
+
 ------------------------------
 
 BASE DE DONNÉES
@@ -59,4 +61,4 @@ N'utilisez le fichier web.php qu'en cas de tests !
 
 TO DO
 
-Changement de la syntaxe des requêtes sql DONE
+-
