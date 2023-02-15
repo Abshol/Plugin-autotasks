@@ -28,6 +28,9 @@ dropdownBtns.forEach(btn => btn.addEventListener('click', function() {
   }
 }));
 
+var editor = document.querySelector( '#editor' );
+CKEDITOR.replace('editor');
+
 // Get the input field
 var input = document.getElementById("focusInput");
 
@@ -41,5 +44,3 @@ input.addEventListener("keypress", function(event) {
     document.getElementById("focus").click();
   }
 }); 
-var editor = document.querySelector( '#editor' );
-CKEDITOR.replace('editor');
