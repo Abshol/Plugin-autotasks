@@ -1,4 +1,4 @@
-#INFORMATIONS
+# INFORMATIONS
 
 Un plug-in crée pendant un stage pour accompagner GLPI dans la gestion des tickets et de l'escalation des tâches
 
@@ -22,9 +22,9 @@ Modifier le nombre d'action sur toute la base de données (appelée "hard-reset"
 
 Vous pouvez changer les groupes attribués aux tickets crées avec le formulaire du plug-in via le fichier config.ini dans le dossier front/
 
-------------------------------
 
-#BASE DE DONNÉES
+
+# BASE DE DONNÉES
 
 Le plug-in crée plusieurs tables dans la base de données pour son bon fonctionnement:
 
@@ -41,24 +41,22 @@ Le plug-in crée plusieurs tables dans la base de données pour son bon fonction
 Les tables servant à logger auront leurs données automatiquement supprimées si celles-ci dépassent sont renseignées depuis plus de 6 mois conformément aux lois de protections des données
 **
 
-------------------------------
 
-#TÂCHE AUTOMATIQUE
+
+# TÂCHE AUTOMATIQUE
 
 La tâche automatique se nomme "AutoTasks", elle effectue une recharge de la base sur les dernières 24 heures toutes les 5 minutes
 
-------------------------------
 
-#INSTALLATION
 
-N'oubliez pas de faire un "composer install" pour installer les librairies requises
+# INSTALLATION
 
-Il est nécessaire que votre utilisateur web ait les droits d'accès sur le fichier tools/history.log afin de remplir les logs et de pouvoir lancer manuellement le plug-in
+N'oubliez pas de faire un "composer install" pour installer les librairies requises<br>Il est nécessaire que votre utilisateur web ait les droits d'accès sur le fichier tools/history.log afin de remplir les logs et de pouvoir lancer manuellement le plug-in
 
 N'utilisez le fichier web.php qu'en cas de tests !
 
-------------------------------
 
-#TO DO
+
+# TO DO
 
 -
