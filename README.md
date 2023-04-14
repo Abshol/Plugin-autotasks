@@ -1,4 +1,4 @@
-INFORMATIONS
+#INFORMATIONS
 
 Un plug-in crée pendant un stage pour accompagner GLPI dans la gestion des tickets et de l'escalation des tâches
 
@@ -24,7 +24,7 @@ Vous pouvez changer les groupes attribués aux tickets crées avec le formulaire
 
 ------------------------------
 
-BASE DE DONNÉES
+#BASE DE DONNÉES
 
 Le plug-in crée plusieurs tables dans la base de données pour son bon fonctionnement:
 
@@ -43,13 +43,13 @@ Les tables servant à logger auront leurs données automatiquement supprimées s
 
 ------------------------------
 
-TÂCHE AUTOMATIQUE
+#TÂCHE AUTOMATIQUE
 
 La tâche automatique se nomme "AutoTasks", elle effectue une recharge de la base sur les dernières 24 heures toutes les 5 minutes
 
 ------------------------------
 
-INSTALLATION
+#INSTALLATION
 
 N'oubliez pas de faire un "composer install" pour installer les librairies requises
 
@@ -59,6 +59,6 @@ N'utilisez le fichier web.php qu'en cas de tests !
 
 ------------------------------
 
-TO DO
+#TO DO
 
 -
